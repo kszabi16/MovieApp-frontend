@@ -1,0 +1,27 @@
+/* mehet ugyanaz mint login */
+.container {
+  max-width: 380px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+button {
+  margin-top: 12px;
+  padding: 10px;
+}
+
+.error {
+  color: red;
+}
+
+.link {
+  font-size: 14px;
+}
