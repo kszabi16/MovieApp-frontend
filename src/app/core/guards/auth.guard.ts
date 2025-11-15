@@ -1,31 +1,35 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard = () => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
+export const roleGuard = (expectedRole: string): CanActivateFn => {
 
-  const token = auth.token;
-  const role = auth.role;
+  return () => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
 
-  if (!token) {
-    router.navigate(['/login']);
+    if (!authService.isLoggedIn) {
+      console.log('RoleGuard: Nincs bejelentkezve, átirányítás /login-ra');
+      router.navigate(['/login']);
+      return false; 
+    }
+
+    const userRole = authService.role;
+
+    if (userRole === expectedRole) {
+      return true; 
+    }
+
+    console.warn(`RoleGuard: Jogosulatlan hozzáférés (várt: ${expectedRole}, kapott: ${userRole})`);
+    if (userRole === 'Admin') {
+      router.navigate(['/admin-dashboard']);
+    } else if (userRole === 'User') {
+      router.navigate(['/user-dashboard']);
+    } else {
+      authService.logout();
+      router.navigate(['/login']);
+    }
+    
     return false;
-  }
-
-  // If admin → admin dashboard
-  if (role === "Admin") {
-    router.navigate(['/admin-dashboard']);
-    return false;
-  }
-
-  // If user → user dashboard
-  if (role === "User") {
-    router.navigate(['/user-dashboard']);
-    return false;
-  }
-
-  router.navigate(['/login']);
-  return false;
+  };
 };

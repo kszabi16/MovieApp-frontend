@@ -41,3 +41,22 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+===================================
+
+Visual Studio IDE (nem VS Code)
+
+===================================
+
+A teljes .vs mappát hagyja figyelmen kívül
+
+/.vs/
+
+Visual Studio Solution User Options
+
+*.suo
+*.wsuo
+
+Visual Studio Solution Local Database
+
+*.slnx.sqlite
