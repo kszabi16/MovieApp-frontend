@@ -28,24 +28,28 @@ export class LoginComponent {
   ) {}
 
   submit() {
-  this.error = '';
+    this.error = '';
 
-  this.authService.login(this.model).subscribe({
-    next: () => {
-      const role = this.authService.role;
+    this.authService.login(this.model).subscribe({
+      next: () => {
+        const role = this.authService.role;
 
-      if (role === 'Admin') {
-        this.router.navigate(['/admin-dashboard']);
-      } else {
-        this.router.navigate(['/user-dashboard']);
+        console.log('ROLE FROM TOKEN:', role);
+
+        if (role === 'Admin') {
+          this.router.navigate(['/admin-dashboard']);
+        } else if (role === 'User') {
+          this.router.navigate(['/user-dashboard']);
+        } else {
+          this.router.navigate(['/user-dashboard']);
+        }
+      },
+      error: err => {
+        console.log('LOGIN ERROR:', err);
+        this.error = err.status === 401
+          ? 'Hibás email vagy jelszó'
+          : (err.error?.message ?? 'Váratlan hiba történt');
       }
-    },
-    error: err => {
-  console.log('LOGIN ERROR:', err);
-  this.error = err.status === 401
-    ? 'Hibás email vagy jelszó'
-    : (err.error?.message ?? 'Váratlan hiba történt');
-}
-  });
-}
+    });
+  }
 }

@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of, tap } from 'rxjs';
 import { Movie } from '../../../core/models/movie.models';
 import { MovieService } from '../../../core/services/movie.service';
-
 import { RatingService, UserRating, CreateRatingDto } from '../../../core/services/rating.service';
 import { FavoriteService, UserFavorite } from '../../../core/services/favorite.service';
 import { ViewHistoryService, UserViewHistory } from '../../../core/services/view-history.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -30,7 +31,9 @@ export class UserDashboardComponent implements OnInit {
     private movieService: MovieService,
     private ratingService: RatingService,
     private favoriteService: FavoriteService,
-    private viewHistoryService: ViewHistoryService
+    private viewHistoryService: ViewHistoryService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +69,19 @@ export class UserDashboardComponent implements OnInit {
       
       this.isLoading = false;
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  goToMovies(): void {
+    this.router.navigate(['/user-dashboard']);
+  }
+
+  goToFavorites(): void {
+    this.router.navigate(['/favorites']);
   }
 
   isFavorite(movieId: number): boolean {
