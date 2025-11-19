@@ -1,0 +1,39 @@
+<h2>Filmek kezelése</h2>
+
+<button (click)="addMovie()"> 🎬 Új film hozzáadása </button>
+
+<div class="movie-grid">
+
+  <div class="movie-card" *ngFor="let m of movies">
+
+    <div class="movie-title">{{ m.title }}</div>
+
+    <div class="movie-meta">{{ m.releaseYear }} • {{ m.director }}</div>
+
+    <div class="genres">
+      <span class="genre-badge" *ngFor="let g of m.genres">
+        {{ g }}
+      </span>
+    </div>
+
+    <div class="movie-meta">Átlag értékelés: {{ m.averageRating }}</div>
+
+    <div class="actions">
+
+      <div class="action-btn action-edit" (click)="editMovie(m)">
+        ✏️
+      </div>
+
+      <div class="action-btn action-delete" (click)="deleteMovie(m.id)">
+        🗑️
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<br>
+
+    <button routerLink="/admin-dashboard">Vissza a Főoldalra</button>
+

@@ -12,6 +12,8 @@ import { ProfileComponent } from './features/profile/profile.component';
 
 import { RecommendationsComponent } from './features/recommendation/recommendation.component';
 
+import { ManageMoviesComponent } from '../app/features/admin-pages/manage-movies/manage-movies';
+
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -21,6 +23,7 @@ export const routes: Routes = [
     component: AdminDashboardComponent, 
     canActivate: [roleGuard('Admin')] 
   },
+
 
   { 
     path: 'user-dashboard', 
@@ -45,6 +48,12 @@ export const routes: Routes = [
     component: RecommendationsComponent,
     canActivate: [roleGuard('User')]
   },
+
+  { path: 'manage-movies',
+    component: ManageMoviesComponent,
+    canActivate: [roleGuard('Admin')] 
+  },
+  
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }

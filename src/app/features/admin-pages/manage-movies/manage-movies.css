@@ -1,0 +1,109 @@
+/* --- GLOBAL --- */
+:host {
+  display: block;
+  padding: 40px;
+  background: #0f0f0f;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h1, h2 {
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #f5f5f5;
+}
+
+/* --- BUTTON --- */
+button {
+  background: #e50914; /* Netflix piros */
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #b20710;
+}
+
+/* --- FILM GRID --- */
+.movie-grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* --- MOVIE CARD --- */
+.movie-card {
+  background: #1a1a1a;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px #000;
+  transition: 0.25s ease-in-out;
+  position: relative;
+}
+
+.movie-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px #e50914;
+}
+
+/* --- CARD TITLE --- */
+.movie-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.movie-meta {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* --- GENRE BADGES --- */
+.genre-badge {
+  background: #333;
+  border: 1px solid #555;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+/* --- ACTION BUTTONS --- */
+.actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  background: #222;
+  padding: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  background: #333;
+  transform: translateY(-3px);
+}
+
+.action-edit {
+  color: #ffa600;
+}
+
+.action-delete {
+  color: #ff4444;
+}

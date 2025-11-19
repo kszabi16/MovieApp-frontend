@@ -27,6 +27,7 @@ export class MovieService {
   private ratingUrl = `${environment.apiUrl}/Rating`;
   private favoriteUrl = `${environment.apiUrl}/Favorite`;
   private viewHistoryUrl = `${environment.apiUrl}/ViewHistory`;
+  private genreUrl = `${environment.apiUrl}/Genre`;
 
   constructor(private http: HttpClient) { }
 
@@ -51,5 +52,22 @@ export class MovieService {
     return this.http.post(this.viewHistoryUrl, dto).pipe(
       tap(() => console.log(`Film látottnak jelölve: ${dto.movieId}`))
     );
+  }
+  getById(id: number): Observable<Movie> {
+    return this.http.get<Movie>(`${this.movieUrl}/${id}`);
+  }
+
+  create(movie: Movie): Observable<Movie> {
+    return this.http.post<Movie>(this.movieUrl, movie);
+  }
+
+  update(id: number, movie: Movie): Observable<void> {
+    return this.http.put<void>(`${this.movieUrl}/${id}`, movie);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.movieUrl}/${id}`).pipe(tap(() => {
+      console.log(`Film törölve: ${id}`);
+    }));
   }
 }
