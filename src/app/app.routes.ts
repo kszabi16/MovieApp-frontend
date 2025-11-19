@@ -8,6 +8,8 @@ import { UserDashboardComponent } from './features/dashboards/user-dashboard/use
 
 import { UserFavoritesComponent } from './features/user-favorites/user-favorites.component';
 
+import { ProfileComponent } from './features/profile/profile.component';
+
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -25,9 +27,15 @@ export const routes: Routes = [
   },
 
   { 
-  path: 'favorites',
-  component: UserFavoritesComponent,
-  canActivate: [roleGuard('User')]
+    path: 'favorites',
+    component: UserFavoritesComponent,
+    canActivate: [roleGuard('User')]
+  },
+
+  { 
+    path: 'profile',
+    component: ProfileComponent,
+   canActivate: [roleGuard('User')]
   },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
