@@ -10,6 +10,8 @@ import { UserFavoritesComponent } from './features/user-favorites/user-favorites
 
 import { ProfileComponent } from './features/profile/profile.component';
 
+import { RecommendationsComponent } from './features/recommendation/recommendation.component';
+
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
@@ -36,6 +38,12 @@ export const routes: Routes = [
     path: 'profile',
     component: ProfileComponent,
    canActivate: [roleGuard('User')]
+  },
+
+  {
+    path: 'recommendations',
+    component: RecommendationsComponent,
+    canActivate: [roleGuard('User')]
   },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },

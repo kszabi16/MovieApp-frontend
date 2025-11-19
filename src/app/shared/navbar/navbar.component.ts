@@ -45,4 +45,8 @@ export class NavbarComponent {
   goToFavorites(): void {
     this.router.navigate(['/favorites']);
   }
+
+  goToRecommendations(): void {
+    this.router.navigate(['/recommendations']);
+    }
 }
