@@ -49,4 +49,8 @@ export class NavbarComponent {
   goToRecommendations(): void {
     this.router.navigate(['/recommendations']);
     }
+  
+  goToLeaderboard(): void {
+    this.router.navigate(['/leaderboard']);
+  }
 }

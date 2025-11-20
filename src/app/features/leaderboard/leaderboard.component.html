@@ -1,0 +1,81 @@
+<div class="leaderboard-page">
+  <main class="content-wrapper">
+
+    <div class="header-section">
+      <h1 class="page-title">Felhasználói Ranglista</h1>
+      <p class="scoring-info">
+        Pontszámítás: <span class="highlight-rule">3× értékelés + 2× kedvenc + 1× megtekintés</span>
+      </p>
+    </div>
+
+    <div *ngIf="isLoading" class="status-message loading">
+      <div class="spinner"></div>
+      <span>Ranglista betöltése...</span>
+    </div>
+
+    <div *ngIf="error && !isLoading" class="error-alert">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!isLoading && !error" class="leaderboard-content">
+
+      <div *ngIf="items.length === 0" class="status-message empty">
+        Még nincs elég aktivitás a ranglistához.
+      </div>
+
+      <div *ngIf="items.length > 0" class="table-container glass-panel">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-user">Felhasználó</th>
+              <th class="col-stat text-center">Értékelések</th>
+              <th class="col-stat text-center">Kedvencek</th>
+              <th class="col-stat text-center">Megtekintések</th>
+              <th class="col-points text-right">Pont</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index"
+                [class.current-user-row]="isCurrentUser(item)"
+                class="data-row">
+              
+              <td class="col-rank">
+                <span class="rank-badge"
+                      [class.rank-1]="i === 0"
+                      [class.rank-2]="i === 1"
+                      [class.rank-3]="i === 2">
+                  {{ i + 1 }}
+                </span>
+              </td>
+              
+              <td class="col-user">
+                <div class="user-info">
+                  <span class="username">{{ item.username }}</span>
+                  <span *ngIf="isCurrentUser(item)" class="badge-you">Te</span>
+                </div>
+              </td>
+              
+              <td class="col-stat text-center text-dim">
+                {{ item.totalRatings }}
+              </td>
+              
+              <td class="col-stat text-center text-dim">
+                {{ item.totalFavorites }}
+              </td>
+              
+              <td class="col-stat text-center text-dim">
+                {{ item.totalViews }}
+              </td>
+              
+              <td class="col-points text-right">
+                <span class="points-value">{{ item.points }}</span>
+              </td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
