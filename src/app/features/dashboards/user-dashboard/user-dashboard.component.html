@@ -2,6 +2,75 @@
   <main class="flex-1 p-4 md:p-8">
     <h1 class="text-3xl font-bold mb-6">Filmek</h1>
 
+    <div class="search-bar-wrapper">
+      <div class="search-bar">
+
+        <button
+          type="button"
+          class="search-filter-btn"
+          (click)="toggleSearchDropdown()">
+          <span class="search-filter-label">{{ getSearchFieldLabel() }}</span>
+          <span class="search-filter-chevron">▾</span>
+        </button>
+
+        <input
+          type="text"
+          class="search-input"
+          [ngModel]="searchTerm"
+          (ngModelChange)="onSearchTermChange($event)"
+          placeholder="Keresés cím, rendező vagy műfaj szerint..." />
+
+        <button
+          type="button"
+          class="search-icon-btn">
+          🔍
+        </button>
+
+        <div
+          *ngIf="isSearchDropdownOpen"
+          class="search-filter-dropdown">
+          <button
+            type="button"
+            class="search-filter-item"
+            (click)="setSearchField('all')">
+            Minden
+          </button>
+          <button
+            type="button"
+            class="search-filter-item"
+            (click)="setSearchField('title')">
+            Cím
+          </button>
+          <button
+            type="button"
+            class="search-filter-item"
+            (click)="setSearchField('director')">
+            Rendező
+          </button>
+          <button
+            type="button"
+            class="search-filter-item"
+            (click)="setSearchField('genre')">
+            Műfaj
+          </button>
+        </div>
+
+        <div
+          *ngIf="searchField === 'genre' && genreSuggestions.length > 0 && searchTerm"
+          class="search-genre-suggestions">
+          <button
+            *ngFor="let g of genreSuggestions"
+            type="button"
+            class="search-genre-item"
+            (click)="selectGenre(g)">
+            {{ g }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
     <ng-container *ngIf="isLoading || error; else moviesContent">
       <div *ngIf="error; else loading" class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg" role="alert">
         <strong class="font-bold">Hiba történt:</strong>
@@ -17,10 +86,9 @@
 
     <ng-template #moviesContent>
 
-      <div *ngIf="movies.length > 0; else noMovies"
-           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div *ngIf="filteredMovies.length > 0; else noMovies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
 
-        <div *ngFor="let movie of movies" class="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+        <div *ngFor="let movie of filteredMovies" class="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
           <img [src]="movie.posterUrl"
                [alt]="movie.title"
                class="w-full h-64 object-cover"

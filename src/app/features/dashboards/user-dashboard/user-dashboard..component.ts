@@ -1,39 +1,45 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { catchError, forkJoin, of, tap } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { catchError, forkJoin, of } from 'rxjs';
 import { Movie } from '../../../core/models/movie.models';
 import { MovieService } from '../../../core/services/movie.service';
-import { RatingService, UserRating, CreateRatingDto } from '../../../core/services/rating.service';
-import { FavoriteService, UserFavorite } from '../../../core/services/favorite.service';
-import { ViewHistoryService, UserViewHistory } from '../../../core/services/view-history.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
+
+import { RatingService } from '../../../core/services/rating.service';
+import { FavoriteService } from '../../../core/services/favorite.service';
+import { ViewHistoryService } from '../../../core/services/view-history.service';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.css']
 })
 export class UserDashboardComponent implements OnInit {
 
   movies: Movie[] = [];
-  
-  myRatings = new Map<number, number>(); 
-  myFavorites = new Set<number>();      
-  mySeen = new Set<number>();           
+
+  myRatings = new Map<number, number>();
+  myFavorites = new Set<number>();
+  mySeen = new Set<number>();
 
   isLoading = true;
   error: string | null = null;
+
+  searchTerm: string = '';
+  searchField: 'all' | 'title' | 'director' | 'genre' = 'all';
+  isSearchDropdownOpen = false;
+
+  allGenres: string[] = [];
+  genreSuggestions: string[] = [];
+  selectedGenre: string | null = null;
 
   constructor(
     private movieService: MovieService,
     private ratingService: RatingService,
     private favoriteService: FavoriteService,
-    private viewHistoryService: ViewHistoryService,
-    private authService: AuthService,
-    private router: Router
+    private viewHistoryService: ViewHistoryService
   ) {}
 
   ngOnInit(): void {
@@ -53,35 +59,30 @@ export class UserDashboardComponent implements OnInit {
         } else {
           this.error = "Ismeretlen hiba történt az adatok betöltése közben. (Valószínűleg API útvonal hiba)";
         }
-        return of(null); 
+        return of(null);
       })
     ).subscribe(data => {
       if (!data) {
         this.isLoading = false;
         return;
       }
-      
+
       this.movies = data.movies;
 
-      data.ratings.forEach(r => this.myRatings.set(r.movieId, r.score));
-      data.favorites.forEach(f => this.myFavorites.add(f.movieId));
-      data.seenHistory.forEach(s => this.mySeen.add(s.movieId));
-      
+      data.ratings.forEach((r: any) => this.myRatings.set(r.movieId, r.score));
+      data.favorites.forEach((f: any) => this.myFavorites.add(f.movieId));
+      data.seenHistory.forEach((s: any) => this.mySeen.add(s.movieId));
+
+      const genreSet = new Set<string>();
+      this.movies.forEach(m => {
+        if (m.genres && Array.isArray(m.genres)) {
+          m.genres.forEach(g => genreSet.add(g));
+        }
+      });
+      this.allGenres = Array.from(genreSet).sort();
+
       this.isLoading = false;
     });
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
-  goToMovies(): void {
-    this.router.navigate(['/user-dashboard']);
-  }
-
-  goToFavorites(): void {
-    this.router.navigate(['/favorites']);
   }
 
   isFavorite(movieId: number): boolean {
@@ -94,19 +95,18 @@ export class UserDashboardComponent implements OnInit {
 
   getRating(movieId: number): number {
     const score = this.myRatings.get(movieId) || 0;
-    return score / 2; 
+    return score / 2;
   }
 
   onRate(movieId: number, rating: number): void {
-    const score = rating * 2; 
+    const score = rating * 2;
     const oldScore = this.myRatings.get(movieId) || 0;
 
-    this.myRatings.set(movieId, score); 
+    this.myRatings.set(movieId, score);
     this.myRatings = new Map(this.myRatings);
 
     this.ratingService.rateMovie({ movieId, score }).subscribe({
-      next: () => {
-      },
+      next: () => {},
       error: (err) => {
         console.error('Hiba az értékelés mentésekor, UI visszaállítva:', err);
         this.myRatings.set(movieId, oldScore);
@@ -125,13 +125,12 @@ export class UserDashboardComponent implements OnInit {
     }
     this.myFavorites = new Set(this.myFavorites);
 
-    const request$ = wasFavorite 
+    const request$ = wasFavorite
       ? this.favoriteService.unfavoriteMovie(movieId)
       : this.favoriteService.favoriteMovie({ movieId });
 
     request$.subscribe({
-      next: () => {
-      },
+      next: () => {},
       error: (err) => {
         console.error('Hiba a kedvenc mentésekor, UI visszaállítva:', err);
         if (wasFavorite) {
@@ -159,16 +158,108 @@ export class UserDashboardComponent implements OnInit {
       : this.viewHistoryService.markAsSeen(movieId);
 
     request$.subscribe({
-      next: () => {
-      },
+      next: () => {},
       error: (err) => {
-        console.error('Hiba a "Láttam" mentésekor, UI visszaállítva:', err);
+        console.error('Hiba a \"Láttam\" mentésekor, UI visszaállítva:', err);
         if (wasSeen) {
           this.mySeen.add(movieId);
         } else {
           this.mySeen.delete(movieId);
         }
         this.mySeen = new Set(this.mySeen);
+      }
+    });
+  }
+
+  toggleSearchDropdown(): void {
+    this.isSearchDropdownOpen = !this.isSearchDropdownOpen;
+  }
+
+  setSearchField(field: 'all' | 'title' | 'director' | 'genre'): void {
+    this.searchField = field;
+    this.isSearchDropdownOpen = false;
+
+    if (field !== 'genre') {
+      this.selectedGenre = null;
+      this.genreSuggestions = [];
+    }
+  }
+
+  getSearchFieldLabel(): string {
+    switch (this.searchField) {
+      case 'title': return 'Cím';
+      case 'director': return 'Rendező';
+      case 'genre': return 'Műfaj';
+      default: return 'Minden';
+    }
+  }
+
+  onSearchTermChange(term: string): void {
+    this.searchTerm = term;
+
+    if (this.searchField === 'genre') {
+      const t = term.trim().toLowerCase();
+
+      if (!t) {
+        this.genreSuggestions = [];
+        this.selectedGenre = null;
+        return;
+      }
+
+      this.genreSuggestions = this.allGenres
+        .filter(g => g.toLowerCase().includes(t));
+
+      this.selectedGenre = null;
+    } else {
+      this.genreSuggestions = [];
+      this.selectedGenre = null;
+    }
+  }
+
+  selectGenre(genre: string): void {
+    this.selectedGenre = genre;
+    this.searchTerm = genre;
+    this.genreSuggestions = [];
+  }
+
+  get filteredMovies(): Movie[] {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    if (this.searchField === 'genre') {
+      if (!this.selectedGenre) {
+        return this.movies;
+      }
+
+      return this.movies.filter(m =>
+        (m.genres || []).includes(this.selectedGenre as string)
+      );
+    }
+
+    if (!term) {
+      return this.movies;
+    }
+
+    return this.movies.filter(movie => {
+      const title = movie.title?.toLowerCase() ?? '';
+      const description = movie.description?.toLowerCase() ?? '';
+      const director = (movie as any).director?.toLowerCase() ?? '';
+      const genres = (movie.genres ?? []).map(g => g.toLowerCase());
+
+      switch (this.searchField) {
+        case 'title':
+          return title.includes(term);
+
+        case 'director':
+          return director.includes(term);
+
+        case 'all':
+        default:
+          return (
+            title.includes(term) ||
+            description.includes(term) ||
+            director.includes(term) ||
+            genres.some(g => g.includes(term))
+          );
       }
     });
   }
