@@ -27,6 +27,8 @@ export class RecommendationsComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
+  private currentUserId: number | null = null;
+
   constructor(
     private recommendationService: RecommendationService,
     private ratingService: RatingService,
@@ -44,13 +46,20 @@ export class RecommendationsComponent implements OnInit {
       return;
     }
 
-    const userId = currentUser.id;
+    this.currentUserId = currentUser.id;
+    this.loadRecommendations();
+  }
+
+  private loadRecommendations(): void {
+    if (!this.currentUserId) {
+      return;
+    }
 
     this.isLoading = true;
     this.error = null;
 
     forkJoin({
-      recommendations: this.recommendationService.getRecommendations(userId, 10),
+      recommendations: this.recommendationService.getRecommendations(this.currentUserId, 10),
       ratings: this.ratingService.getMyRatings(),
       favorites: this.favoriteService.getMyFavorites(),
       seenHistory: this.viewHistoryService.getMyViewHistory()
@@ -76,6 +85,10 @@ export class RecommendationsComponent implements OnInit {
 
         this.movies = data.recommendations;
 
+        this.myRatings = new Map<number, number>();
+        this.myFavorites = new Set<number>();
+        this.mySeen = new Set<number>();
+
         data.ratings.forEach((r: any) => this.myRatings.set(r.movieId, r.score));
         data.favorites.forEach((f: any) => this.myFavorites.add(f.movieId));
         data.seenHistory.forEach((s: any) => this.mySeen.add(s.movieId));
@@ -94,7 +107,7 @@ export class RecommendationsComponent implements OnInit {
 
   getRating(movieId: number): number {
     const score = this.myRatings.get(movieId) || 0;
-    return score / 2; 
+    return score / 2;
   }
 
   onRate(movieId: number, rating: number): void {
@@ -157,7 +170,11 @@ export class RecommendationsComponent implements OnInit {
       : this.viewHistoryService.markAsSeen(movieId);
 
     request$.subscribe({
-      next: () => {},
+      next: () => {
+        if (!wasSeen) {
+          this.loadRecommendations();
+        }
+      },
       error: (err) => {
         console.error('Hiba a "Láttam" mentésekor, UI visszaállítva:', err);
         if (wasSeen) {
