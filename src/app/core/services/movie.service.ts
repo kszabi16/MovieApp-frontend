@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environments';
-import { Movie } from '../models/movie.models';
+import { CreateMovieDto, Movie, UpdateMovieDto } from '../models/movie.models';
+import { Genre } from '../models/genre.models';
 
 export interface RateMovieDto {
   movieId: number;
@@ -27,14 +28,18 @@ export class MovieService {
   private ratingUrl = `${environment.apiUrl}/Rating`;
   private favoriteUrl = `${environment.apiUrl}/Favorite`;
   private viewHistoryUrl = `${environment.apiUrl}/ViewHistory`;
-  private genreUrl = `${environment.apiUrl}/Genre`;
+
 
   constructor(private http: HttpClient) { }
 
   getMovies(): Observable<Movie[]> {
     console.log('MovieService: Filmek lekérése...');
-    return this.http.get<Movie[]>(this.movieUrl);
-  }
+    return this.http.get<Movie[]>(this.movieUrl).pipe(
+        tap(response => {
+            console.log('API válasz:', response);
+        })
+    );
+}
 
   rateMovie(dto: RateMovieDto): Observable<any> {
     return this.http.post(this.ratingUrl, dto).pipe(
@@ -57,11 +62,11 @@ export class MovieService {
     return this.http.get<Movie>(`${this.movieUrl}/${id}`);
   }
 
-  create(movie: Movie): Observable<Movie> {
-    return this.http.post<Movie>(this.movieUrl, movie);
+  create(movie: CreateMovieDto): Observable<CreateMovieDto> {
+    return this.http.post<CreateMovieDto>(this.movieUrl, movie);
   }
 
-  update(id: number, movie: Movie): Observable<void> {
+  update(id: number, movie: UpdateMovieDto): Observable<void> {
     return this.http.put<void>(`${this.movieUrl}/${id}`, movie);
   }
 
