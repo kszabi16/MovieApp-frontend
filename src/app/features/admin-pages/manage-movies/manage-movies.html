@@ -1,33 +1,164 @@
-<!-- Új film hozzáadása vagy szerkesztése -->
-<div *ngIf="isFormOpen" class="form-container">
-  <div class="form-content bg-gray-800 p-4 rounded-lg shadow-lg">
-    <h2 class="text-xl font-semibold">{{ editingMovie ? 'Film szerkesztése' : 'Új film hozzáadása' }}</h2>
-    
-    <label class="block mt-2">Cím:</label>
-    <input type="text" class="input" [(ngModel)]="formModel.title" />
 
-    <label class="block mt-2">Leírás:</label>
-    <textarea class="input" [(ngModel)]="formModel.description"></textarea>
+<header class="page-header">
+      <h1 class="title">Filmek</h1>
+      <div class="decoration-line"></div>
+    </header>
+<div class="bg-gray-900 min-h-screen text-white p-6">
+  
+<!-- KERESŐSÁV -->
+<div class="search-section mb-6">
+  <div class="search-bar">
 
-    <label class="block mt-2">Megjelenési év:</label>
-    <input type="number" class="input" [(ngModel)]="formModel.releaseYear" />
+    <!-- Dropdown selector -->
+    <button type="button" class="filter-toggle-btn" (click)="toggleSearchDropdown()">
+      <span class="filter-label">{{ getSearchFieldLabel() }}</span>
+      <span class="filter-arrow">▼</span>
+    </button>
 
-    <label class="block mt-2">Műfajok:</label>
-    <div class="genres">
-      <label *ngFor="let genre of genres">
-        <input 
-          type="checkbox" 
-          [(ngModel)]="formModel.genres" 
-          [value]="genre.name"
-          (change)="onGenreChange(genre.name)"
-        /> 
-        {{ genre.name }}
-      </label>
+    <input
+      type="text"
+      class="search-input"
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchTermChange($event)"
+      placeholder="Keresés..." />
+
+    <button type="button" class="search-icon-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+
+    <!-- Dropdown menu -->
+    <div *ngIf="isSearchDropdownOpen" class="dropdown-menu fade-in">
+      <button class="dropdown-item" (click)="setSearchField('all')">Minden</button>
+      <button class="dropdown-item" (click)="setSearchField('title')">Cím</button>
+      <button class="dropdown-item" (click)="setSearchField('director')">Rendező</button>
+      <button class="dropdown-item" (click)="setSearchField('genre')">Műfaj</button>
     </div>
 
-    <button class="button bg-green-600 text-white mt-4" (click)="saveMovie()">
-      {{ editingMovie ? 'Mentés' : 'Hozzáadás' }}
-    </button>
-    <button class="button bg-gray-500 text-white mt-4" (click)="closeForm()">Mégsem</button>
+    <!-- Genre suggestions -->
+    <div *ngIf="searchField === 'genre' && genreSuggestions.length > 0 && searchTerm"
+         class="suggestions-menu fade-in">
+      <button *ngFor="let g of genreSuggestions" 
+              class="suggestion-item" 
+              (click)="selectGenre(g)">
+        {{ g }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+  <!-- Új film gomb -->
+  <button class="admin-btn btn-add" (click)="addMovie()" >Új film hozzáadása</button>
+  <button routerLink="/admin-dashboard" class="admin-btn btn-add">
+    Vissza
+  </button>
+<br>
+
+  <!-- Film grid -->
+ <div *ngIf="filteredMovies.length > 0" class="media-grid">
+  <div *ngFor="let movie of filteredMovies" class="media-card">
+
+    <div class="poster-wrapper">
+      <img 
+        [src]="movie.posterUrl || 'https://placehold.co/400x600/374151/9ca3af?text=No+Poster'"
+        alt="{{ movie.title }}"
+        class="poster-image"
+      />
+      <div class="poster-overlay"></div>
+    </div>
+
+    <div class="card-body">
+      <div class="card-header">
+        <h2 class="media-title">{{ movie.title }}</h2>
+        <span class="media-year">{{ movie.releaseYear }}</span>
+      </div>
+
+      <p class="media-director">
+        Rendező: {{ movie.director || 'Ismeretlen' }}
+      </p>
+
+      <p class="media-desc">
+        {{ movie.description }}
+      </p>
+
+      <div class="tags-container">
+        <span class="tag" *ngFor="let genre of movie.genres">
+          {{ genre }}
+        </span>
+      </div>
+
+      <div class="buttons-row">
+        <button class="admin-btn btn-edit" (click)="editMovie(movie)">
+          ✏️ Szerkesztés
+        </button>
+        <button class="admin-btn btn-delete" (click)="deleteMovie(movie.id)">
+          🗑️ Törlés
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- Üres állapot -->
+  <div *ngIf="movies.length === 0" class="text-center py-20">
+    <p class="text-xl text-gray-500">Nincsenek filmek a rendszerben.</p>
+  </div>
+  
+  
+
+
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" [class.active]="isFormOpen">
+  <div class="modal">
+    
+    <h2 *ngIf="!editingMovie">Új film hozzáadása</h2>
+    <h2 *ngIf="editingMovie">Film szerkesztése</h2>
+
+    <!-- === FORM === -->
+    <form (ngSubmit)="saveMovie()" class="movie-form">
+
+      <label>Cím:</label>
+      <input type="text" [(ngModel)]="formModel.title" name="title" required />
+
+      <label>Leírás:</label>
+      <textarea [(ngModel)]="formModel.description" name="description" required></textarea>
+
+      <label>Megjelenési év:</label>
+      <input type="number" [(ngModel)]="formModel.releaseYear" name="releaseYear" />
+
+      <label>Rendező:</label>
+      <input type="text" [(ngModel)]="formModel.director" name="director" />
+
+      <label>Poszter URL:</label>
+      <input type="text" [(ngModel)]="formModel.posterUrl" name="posterUrl" />
+
+      <!-- MŰFAJOK -->
+      <div class="genre-section">
+        <p>Műfajok:</p>
+        <div class="genre-list">
+          <label *ngFor="let g of genres">
+            <input type="checkbox"
+                   [checked]="selectedGenres.includes(g.name)"
+                   (change)="onGenreChange(g.name)" />
+            {{ g.name }}
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="submit" class="btn-primary">
+          {{ editingMovie ? 'Mentés' : 'Hozzáadás' }}
+        </button>
+
+        <button type="button" class="btn-secondary" (click)="closeForm()">
+          Bezárás
+        </button>
+      </div>
+
+    </form>
   </div>
 </div>

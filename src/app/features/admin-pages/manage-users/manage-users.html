@@ -1,0 +1,144 @@
+
+
+<div class="p-6">
+
+
+
+
+ <header class="page-header">
+      <h1 class="title">Felhasználók kezelése</h1>
+      <div class="decoration-line"></div>
+    </header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-gray-300">Betöltés...</div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="text-red-400">{{ error }}</div>
+    
+            <div class="button-container">
+                <button
+            class="btn-add mb-4"
+            (click)="openAddModal()">
+            +Új felhasználó hozzáadása
+            </button>
+    <button class="btn-add"routerLink="/admin-dashboard">Vissza</button>
+</div>
+  <!-- Users Table -->
+  <div *ngIf="!loading" class="overflow-x-auto rounded-xl border border-gray-700">
+    <table class="min-w-full divide-y divide-gray-700">
+      <thead class="bg-gray-800">
+        <tr>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">ID</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Felhasználónév</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Email</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Szerepkör</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Létrehozva</th>
+          <th class="px-4 py-3 text-sm font-medium text-gray-300">Műveletek</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700 bg-gray-900">
+
+        <tr *ngFor="let user of users">
+          <td class="px-4 py-3 text-gray-300">{{ user.id }}</td>
+          <td class="px-4 py-3">{{ user.username }}</td>
+          <td class="px-4 py-3">{{ user.email }}</td>
+          <td class="px-4 py-3">
+            <span class="px-3 py-1 rounded-full text-xs font-semibold"
+              [class.bg-blue-600]="user.role === 'Admin'"
+              [class.bg-green-600]="user.role === 'User'">
+              {{ user.role }}
+            </span>
+          </td>
+          <td class="px-4 py-3">{{ user.createdAt | date:'yyyy-MM-dd' }}</td>
+
+          <td class="px-4 py-3 flex gap-2">
+            <button
+              (click)="editUser(user)"
+              class="btn-add">
+              Szerkesztés
+            </button>
+            <button
+              (click)="deleteUser(user.id)"
+              class="btn-add">
+              Törlés
+            </button>
+                    
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  
+    
+
+</div>
+<!-- EDIT MODAL -->
+ <div *ngIf="editMode" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+  
+    <div class="bg-gray-800 p-6 rounded-xl w-full max-w-md">
+
+      <h2 class="text-xl font-semibold mb-4 text-white">Felhasználó szerkesztése</h2>
+
+      <label class="block text-gray-300 mb-1">Felhasználónév</label>
+      <input [(ngModel)]="selectedUser!.username"
+             class="w-full p-2 rounded bg-gray-700 text-white mb-3"/>
+
+      <label class="block text-gray-300 mb-1">Email</label>
+      <input [(ngModel)]="selectedUser!.email"
+             class="w-full p-2 rounded bg-gray-700 text-white mb-3"/>
+
+      <label class="block text-gray-300 mb-1">Szerepkör</label>
+      <select [(ngModel)]="selectedUser!.role"
+              class="w-full p-2 rounded bg-gray-700 text-white mb-5">
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+      </select>
+
+      <div class="flex justify-end gap-3">
+        <button (click)="cancelEdit()" class="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
+          Mégse
+        </button>
+        <button (click)="saveUser()" class="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700">
+          Mentés
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <!-- ADD NEW USER MODAL -->
+<div *ngIf="addMode" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+
+  <div class="bg-gray-800 p-6 rounded-xl w-full max-w-md">
+
+    <h2 class="text-xl font-semibold mb-4 text-white">Új felhasználó hozzáadása</h2>
+
+    <label class="block text-gray-300 mb-1">Felhasználónév</label>
+    <input [(ngModel)]="newUser.username"
+           class="w-full p-2 rounded bg-gray-700 text-white mb-3"/>
+
+    <label class="block text-gray-300 mb-1">Email</label>
+    <input [(ngModel)]="newUser.email"
+           class="w-full p-2 rounded bg-gray-700 text-white mb-3"/>
+
+    <label class="block text-gray-300 mb-1">Szerepkör</label>
+    <select [(ngModel)]="newUser.role"
+            class="w-full p-2 rounded bg-gray-700 text-white mb-5">
+      <option value="Admin">Admin</option>
+      <option value="User">User</option>
+    </select>
+
+    <div class="flex justify-end gap-3">
+      <button (click)="cancelAdd()" class="px-4 py-2 bg-gray-600 rounded-lg hover:bg-gray-500">
+        Mégse
+      </button>
+      <button (click)="createUser()" class="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700">
+        Hozzáadás
+      </button>
+    </div>
+
+  </div>
+</div>
+

@@ -17,7 +17,7 @@ import { Genre } from '../../../core/models/genre.models';
 export class ManageMoviesComponent implements OnInit {
 
   movies: Movie[] = [];
-  genres: Genre[] = [];  // A műfajok listája
+  genres: Genre[] = [];  
   selectedGenres: string[] = [];
   isFormOpen = false;
   editingMovie: Movie | null = null;
@@ -26,6 +26,7 @@ export class ManageMoviesComponent implements OnInit {
     description: '',
     releaseYear: 2000,
     posterUrl: '',
+    director: '',
     genres: []
   };
   
@@ -33,6 +34,13 @@ export class ManageMoviesComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
+      searchTerm: string = '';
+    searchField: 'all' | 'title' | 'director' | 'genre' = 'all';
+    isSearchDropdownOpen = false;
+
+    allGenres: string[] = [];
+    genreSuggestions: string[] = [];
+    selectedGenre: string | null = null;
   constructor(
     private movieService: MovieService,
     private genreService: GenreService 
@@ -69,15 +77,122 @@ export class ManageMoviesComponent implements OnInit {
         this.error = 'Nem sikerült betölteni a műfajokat.';
       }
     });
+    this.allGenres = this.genres.map(g => g.name).sort();
+
   }
-  onGenreChange(genreName: string): void {
-  const index = this.formModel.genres.indexOf(genreName);
-  if (index === -1) {
-    this.formModel.genres.push(genreName); // Hozzáadás, ha nincs benne
-  } else {
-    this.formModel.genres.splice(index, 1); // Eltávolítás, ha már benne van
+
+  toggleSearchDropdown(): void {
+  this.isSearchDropdownOpen = !this.isSearchDropdownOpen;
+}
+
+setSearchField(field: 'all' | 'title' | 'director' | 'genre'): void {
+  this.searchField = field;
+  this.isSearchDropdownOpen = false;
+
+  if (field !== 'genre') {
+    this.selectedGenre = null;
+    this.genreSuggestions = [];
   }
 }
+getSearchFieldLabel(): string {
+  switch (this.searchField) {
+    case 'title': return 'Cím';
+    case 'director': return 'Rendező';
+    case 'genre': return 'Műfaj';
+    default: return 'Minden';
+  }
+}
+
+onSearchTermChange(term: string): void {
+  this.searchTerm = term;
+
+  if (this.searchField === 'genre') {
+    const t = term.trim().toLowerCase();
+
+    if (!t) {
+      this.genreSuggestions = [];
+      this.selectedGenre = null;
+      return;
+    }
+
+    this.genreSuggestions = this.allGenres
+      .filter(g => g.toLowerCase().includes(t));
+
+    this.selectedGenre = null;
+  } else {
+    this.genreSuggestions = [];
+    this.selectedGenre = null;
+  }
+}
+
+selectGenre(genre: string): void {
+  this.selectedGenre = genre;
+  this.searchTerm = genre;
+  this.genreSuggestions = [];
+}
+get filteredMovies(): Movie[] {
+  const term = this.searchTerm.trim().toLowerCase();
+
+  if (this.searchField === 'genre') {
+    if (!this.selectedGenre) {
+      return this.movies;
+    }
+
+    return this.movies.filter(m =>
+      (m.genres || []).includes(this.selectedGenre as string)
+    );
+  }
+
+  if (!term) {
+    return this.movies;
+  }
+
+  return this.movies.filter(movie => {
+    const title = movie.title?.toLowerCase() ?? '';
+    const description = movie.description?.toLowerCase() ?? '';
+    const director = (movie.director || '').toLowerCase();
+    const genres = (movie.genres || []).map(g => g.toLowerCase());
+
+    switch (this.searchField) {
+      case 'title':
+        return title.includes(term);
+
+      case 'director':
+        return director.includes(term);
+
+      case 'all':
+      default:
+        return (
+          title.includes(term) ||
+          description.includes(term) ||
+          director.includes(term) ||
+          genres.some(g => g.includes(term))
+        );
+    }
+  });
+}
+
+ onGenreChange(genreName: string): void {
+  const index = this.selectedGenres.indexOf(genreName);
+  if (index === -1) {
+    this.selectedGenres.push(genreName); // Hozzáadja a kiválasztott műfajt
+  } else {
+    this.selectedGenres.splice(index, 1); // Eltávolítja a műfajt
+  }
+  this.formModel.genres = [...this.selectedGenres]; // Frissítjük a formModel.genres-t
+}
+
+onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.formModel.posterUrl = e.target.result; // A fájl URL-jét mentjük el
+      };
+      reader.readAsDataURL(file); // Az adat URL formátumba való konvertálása
+    }
+  }
+
 
 
   addMovie() {
@@ -88,6 +203,7 @@ export class ManageMoviesComponent implements OnInit {
       description: '',
       releaseYear: 2000,
       posterUrl: '',
+      director: '',
       genres: []
     };
   }
@@ -101,40 +217,50 @@ export class ManageMoviesComponent implements OnInit {
       description: movie.description,
       releaseYear: movie.releaseYear,
       posterUrl: movie.posterUrl,
+      director: movie.director || '',
       genres: movie.genres || []
     };
   }
 
   saveMovie() {
-    if (!this.editingMovie) {
-      // Új film hozzáadása
-      const dto: CreateMovieDto = { ...this.formModel };
-      this.movieService.create(dto).subscribe({
-        next: () => {
-          this.isFormOpen = false;
-          this.loadMovies();
-        },
-        error: (err) => {
-          console.error('Hiba az új film hozzáadásakor:', err);
-        }
-      });
-    } else {
-      // Film frissítése
-      const dto: UpdateMovieDto = {
-        ...this.formModel,
-        id: this.editingMovie.id
-      };
-      this.movieService.update(this.editingMovie.id, dto).subscribe({
-        next: () => {
-          this.isFormOpen = false;
-          this.loadMovies();
-        },
-        error: (err) => {
-          console.error('Hiba a film frissítésekor:', err);
-        }
-      });
-    }
+  if (!this.editingMovie) {
+    // Új film hozzáadása
+    const dto: CreateMovieDto = {
+      title: this.formModel.title,
+      description: this.formModel.description,
+      releaseYear: this.formModel.releaseYear,
+      posterUrl: this.formModel.posterUrl,
+      genres: this.formModel.genres
+    };
+
+    this.movieService.create(dto).subscribe({
+      next: () => {
+        this.isFormOpen = false;
+        this.loadMovies(); // Filmek újratöltése
+      },
+      error: (err) => {
+        console.error('Hiba az új film hozzáadásakor:', err);
+      }
+    });
+  } else {
+    // Film frissítése
+    const dto: UpdateMovieDto = {
+      ...this.formModel,
+      id: this.editingMovie.id
+    };
+
+    this.movieService.update(this.editingMovie.id, dto).subscribe({
+      next: () => {
+        this.isFormOpen = false;
+        this.loadMovies(); // Filmek újratöltése
+      },
+      error: (err) => {
+        console.error('Hiba a film frissítésekor:', err);
+      }
+    });
   }
+}
+
 
   closeForm() {
     this.isFormOpen = false;

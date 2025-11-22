@@ -16,6 +16,7 @@ export interface CreateMovieDto {
   description: string;
   releaseYear: number;
   posterUrl?: string;
+  director?: string;
   genres: string[];
 }
 
@@ -25,6 +26,7 @@ export interface UpdateMovieDto {
   description: string;
   releaseYear: number;
   posterUrl?: string;
+  director?: string;
   genres: string[];
 }
 

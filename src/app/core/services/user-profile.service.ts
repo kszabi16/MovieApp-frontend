@@ -26,4 +26,14 @@ export class UserApiService {
   updateUser(user: UserProfile): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${this.baseUrl}/${user.id}`, user);
   }
+  createUser(user: UserProfile): Observable<UserProfile> {
+  return this.http.post<UserProfile>(`${this.baseUrl}`, user);
+}
+deleteUser(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/${id}`);
+}
+getAllUsers(): Observable<UserProfile[]> {
+  return this.http.get<UserProfile[]>(`${this.baseUrl}`);
+}
+
 }

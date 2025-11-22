@@ -32,7 +32,7 @@ export class NavbarComponent {
 
   goToMovies(): void {
     if (this.role === 'Admin') {
-      this.router.navigate(['/admin-dashboard']);
+      this.router.navigate(['/user-dashboard']);
     } else {
       this.router.navigate(['/user-dashboard']);
     }
