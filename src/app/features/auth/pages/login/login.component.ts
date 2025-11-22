@@ -20,6 +20,7 @@ export class LoginComponent {
     password: ''
   };
 
+  isLoading = false;
   error = '';
 
   constructor(
@@ -29,23 +30,22 @@ export class LoginComponent {
 
   submit() {
     this.error = '';
+    this.isLoading = true;
 
     this.authService.login(this.model).subscribe({
       next: () => {
         const role = this.authService.role;
-
-        console.log('ROLE FROM TOKEN:', role);
+        this.isLoading = false;
 
         if (role === 'Admin') {
           this.router.navigate(['/admin-dashboard']);
-        } else if (role === 'User') {
-          this.router.navigate(['/user-dashboard']);
         } else {
           this.router.navigate(['/user-dashboard']);
         }
       },
       error: err => {
         console.log('LOGIN ERROR:', err);
+        this.isLoading = false;
         this.error = err.status === 401
           ? 'Hibás email vagy jelszó'
           : (err.error?.message ?? 'Váratlan hiba történt');

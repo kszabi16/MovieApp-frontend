@@ -1,47 +1,37 @@
-<nav *ngIf="isLoggedIn"
-     class="flex items-center justify-between px-4 md:px-8 py-4 bg-gray-900 border-b border-gray-800 text-white">
+<nav *ngIf="isLoggedIn" class="navbar">
+  <div class="nav-container">
 
-  
+    <div class="nav-brand">
+      <span class="brand-text">MOVIE<span class="highlight">APP</span></span>
+    </div>
 
-  <div class="flex items-center gap-3">
+    <div class="nav-links">
+      <button class="nav-item" (click)="goToMovies()" routerLinkActive="active">
+        <span class="icon">🎬</span> Filmek
+      </button>
 
-    <button
-      class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm font-medium"
-      (click)="goToMovies()">
-      Filmek
-    </button>
+      <button class="nav-item" (click)="goToRecommendations()" routerLinkActive="active">
+        <span class="icon">✨</span> Ajánlottak
+      </button>
 
-    <button
-      class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm font-medium"
-      (click)="goToProfile()">
-      Profil
-    </button>
+      <button class="nav-item" (click)="goToLeaderboard()" routerLinkActive="active">
+        <span class="icon">🏆</span> Ranglista
+      </button>
 
-    <button
-      *ngIf="role === 'User'"
-      class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-sm font-medium"
-      (click)="goToFavorites()">
-      Kedvenceim
-    </button>
+      <button *ngIf="role === 'User'" class="nav-item" (click)="goToFavorites()" routerLinkActive="active">
+        <span class="icon">♥</span> Kedvencek
+      </button>
+    </div>
 
-    <button
-      *ngIf="role === 'User'"
-      class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-sm font-medium"
-      (click)="goToRecommendations()">
-      Ajánlottak
-    </button>
+    <div class="nav-actions">
+      <button class="nav-item profile-btn" (click)="goToProfile()" routerLinkActive="active">
+        <span class="icon">👤</span> Profil
+      </button>
 
-    <button
-      *ngIf="isLoggedIn"
-      class="px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-sm font-medium"
-      (click)="goToLeaderboard()">
-      Ranglista
-    </button>
+      <button class="btn-logout" (click)="logout()">
+        Kijelentkezés
+      </button>
+    </div>
 
-    <button
-      class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-sm font-medium"
-      (click)="logout()">
-      Kijelentkezés
-    </button>
   </div>
 </nav>

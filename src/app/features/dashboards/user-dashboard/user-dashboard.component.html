@@ -1,16 +1,17 @@
-<div class="bg-gray-900 min-h-screen text-white flex flex-col">
-  <main class="flex-1 p-4 md:p-8">
-    <h1 class="text-3xl font-bold mb-6">Filmek</h1>
+<div class="dashboard-page">
+  <main class="content-wrapper">
 
-    <div class="search-bar-wrapper">
+    <header class="page-header">
+      <h1 class="title">Filmek</h1>
+      <div class="decoration-line"></div>
+    </header>
+
+    <div class="search-section">
       <div class="search-bar">
 
-        <button
-          type="button"
-          class="search-filter-btn"
-          (click)="toggleSearchDropdown()">
-          <span class="search-filter-label">{{ getSearchFieldLabel() }}</span>
-          <span class="search-filter-chevron">▾</span>
+        <button type="button" class="filter-toggle-btn" (click)="toggleSearchDropdown()">
+          <span class="filter-label">{{ getSearchFieldLabel() }}</span>
+          <span class="filter-arrow">▼</span>
         </button>
 
         <input
@@ -18,51 +19,21 @@
           class="search-input"
           [ngModel]="searchTerm"
           (ngModelChange)="onSearchTermChange($event)"
-          placeholder="Keresés cím, rendező vagy műfaj szerint..." />
+          placeholder="Keresés..." />
 
-        <button
-          type="button"
-          class="search-icon-btn">
-          🔍
+        <button type="button" class="search-icon-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
 
-        <div
-          *ngIf="isSearchDropdownOpen"
-          class="search-filter-dropdown">
-          <button
-            type="button"
-            class="search-filter-item"
-            (click)="setSearchField('all')">
-            Minden
-          </button>
-          <button
-            type="button"
-            class="search-filter-item"
-            (click)="setSearchField('title')">
-            Cím
-          </button>
-          <button
-            type="button"
-            class="search-filter-item"
-            (click)="setSearchField('director')">
-            Rendező
-          </button>
-          <button
-            type="button"
-            class="search-filter-item"
-            (click)="setSearchField('genre')">
-            Műfaj
-          </button>
+        <div *ngIf="isSearchDropdownOpen" class="dropdown-menu fade-in">
+          <button type="button" class="dropdown-item" (click)="setSearchField('all')">Minden</button>
+          <button type="button" class="dropdown-item" (click)="setSearchField('title')">Cím</button>
+          <button type="button" class="dropdown-item" (click)="setSearchField('director')">Rendező</button>
+          <button type="button" class="dropdown-item" (click)="setSearchField('genre')">Műfaj</button>
         </div>
 
-        <div
-          *ngIf="searchField === 'genre' && genreSuggestions.length > 0 && searchTerm"
-          class="search-genre-suggestions">
-          <button
-            *ngFor="let g of genreSuggestions"
-            type="button"
-            class="search-genre-item"
-            (click)="selectGenre(g)">
+        <div *ngIf="searchField === 'genre' && genreSuggestions.length > 0 && searchTerm" class="suggestions-menu fade-in">
+          <button *ngFor="let g of genreSuggestions" type="button" class="suggestion-item" (click)="selectGenre(g)">
             {{ g }}
           </button>
         </div>
@@ -70,93 +41,92 @@
       </div>
     </div>
 
-
     <ng-container *ngIf="isLoading || error; else moviesContent">
-      <div *ngIf="error; else loading" class="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg" role="alert">
-        <strong class="font-bold">Hiba történt:</strong>
-        <span class="block sm:inline"> {{ error }}</span>
+      <div *ngIf="error; else loading" class="message-box error">
+        <strong>Hiba történt:</strong>
+        <span> {{ error }}</span>
       </div>
 
       <ng-template #loading>
-        <div class="text-center py-20">
-          <p class="text-xl text-gray-400">Felhasználói adatok és filmek betöltése...</p>
+        <div class="message-box loading">
+          <div class="loader"></div>
+          <p>Rendszer betöltése...</p>
         </div>
       </ng-template>
     </ng-container>
 
     <ng-template #moviesContent>
 
-      <div *ngIf="filteredMovies.length > 0; else noMovies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div *ngIf="filteredMovies.length > 0; else noMovies" class="media-grid">
+        
+        <div *ngFor="let movie of filteredMovies" class="media-card">
+          
+          <div class="poster-wrapper">
+            <img [src]="movie.posterUrl" 
+                 [alt]="movie.title" 
+                 class="poster-image"
+                 onerror="this.src='https://placehold.co/400x600/0f1623/ffffff?text=No+Cover'">
+            <div class="poster-overlay"></div>
+          </div>
 
-        <div *ngFor="let movie of filteredMovies" class="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
-          <img [src]="movie.posterUrl"
-               [alt]="movie.title"
-               class="w-full h-64 object-cover"
-               onerror="this.src='https://placehold.co/400x600/374151/9ca3af?text=No+Poster'">
+          <div class="card-body">
+            <div class="card-header">
+              <h2 class="media-title" [title]="movie.title">{{ movie.title }}</h2>
+              <span class="media-year">{{ movie.releaseYear }}</span>
+            </div>
 
-          <div class="p-4 flex flex-col flex-grow">
-            <h2 class="text-xl font-semibold truncate" [title]="movie.title">
-              {{ movie.title }} ({{ movie.releaseYear }})
-            </h2>
+            <h3 class="media-director">Rendezte: {{ movie.director || 'Ismeretlen' }}</h3>
 
-            <h3 class="text-sm text-gray-400 mb-1">
-              Rendező: {{ movie.director || 'Ismeretlen' }}
-            </h3>
-
-            <p class="text-gray-400 text-sm mt-1 h-20 overflow-y-auto">
+            <p class="media-desc">
               {{ movie.description }}
             </p>
 
-            <div class="mt-3 flex flex-wrap gap-2">
-              <span *ngFor="let genre of movie.genres"
-                    class="bg-blue-600 text-blue-100 text-xs px-2 py-0.5 rounded-full">
+            <div class="tags-container">
+              <span *ngFor="let genre of movie.genres" class="tag">
                 {{ genre }}
               </span>
             </div>
 
-            <div class="flex-grow"></div>
+            <div class="spacer"></div>
 
-            <div class="mt-4 pt-4 border-t border-gray-700 flex flex-col gap-2">
-
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400">Értékelésem:</span>
-                <div class="flex gap-1">
-                  <button *ngFor="let star of [1,2,3,4,5]"
-                          (click)="onRate(movie.id, star)"
-                          class="text-lg hover:text-yellow-400 transition-colors"
-                          [class.text-yellow-400]="getRating(movie.id) >= star"
-                          [class.text-gray-500]="getRating(movie.id) < star"
-                          [title]="star + ' csillag'">
-                    &#9733;
+            <div class="actions-panel">
+              
+              <div class="rating-wrapper">
+                <span class="label">Rating:</span>
+                <div class="stars">
+                  <button *ngFor="let star of [1,2,3,4,5]" 
+                          (click)="onRate(movie.id, star)" 
+                          class="star-btn"
+                          [class.active]="getRating(movie.id) >= star"
+                          title="{{star}} csillag">
+                    ★
                   </button>
                 </div>
               </div>
 
-              <button (click)="onToggleFavorite(movie.id)"
-                      class="w-full text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors"
-                      [class.bg-pink-600]="!isFavorite(movie.id)"
-                      [class.hover:bg-pink-700]="!isFavorite(movie.id)"
-                      [class.bg-gray-500]="isFavorite(movie.id)"
-                      [class.hover:bg-gray-600]="isFavorite(movie.id)">
-                {{ isFavorite(movie.id) ? 'Kedvenc (Töröl)' : 'Kedvenc' }}
-              </button>
-
-              <button (click)="onToggleSeen(movie.id)"
-                      class="w-full text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors"
-                      [class.bg-gray-700]="!isSeen(movie.id)"
-                      [class.hover:bg-gray-600]="!isSeen(movie.id)"
-                      [class.bg-green-600]="isSeen(movie.id)"
-                      [class.hover:bg-green-700]="isSeen(movie.id)">
-                {{ isSeen(movie.id) ? 'Láttam (Töröl)' : 'Láttam' }}
-              </button>
+              <div class="buttons-row">
+                <button (click)="onToggleFavorite(movie.id)" 
+                        class="btn btn-favorite"
+                        [class.active]="isFavorite(movie.id)">
+                  {{ isFavorite(movie.id) ? '♥ Kedvenc' : '♡ Hozzáadás' }}
+                </button>
+                
+                <button (click)="onToggleSeen(movie.id)" 
+                        class="btn btn-seen"
+                        [class.active]="isSeen(movie.id)">
+                  {{ isSeen(movie.id) ? '👁 Láttam' : '○ Megnézem' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
 
       <ng-template #noMovies>
-        <div class="text-center py-20">
-          <p class="text-xl text-gray-500">Nem találhatóak filmek az adatbázisban.</p>
+        <div class="empty-state">
+          <div class="empty-icon">∅</div>
+          <p>Nincs találat a keresési feltételek alapján.</p>
         </div>
       </ng-template>
 

@@ -21,6 +21,7 @@ export class RegisterComponent {
     password: ''
   };
 
+  isLoading = false;
   error = '';
 
   constructor(
@@ -30,14 +31,17 @@ export class RegisterComponent {
 
   submit() {
     this.error = '';
+    this.isLoading = true;
 
     this.authService.register(this.model).subscribe({
       next: () => {
-        // sikeres regisztráció → irány login / vagy movies
-        this.router.navigate(['/login']);
+        this.isLoading = false;
+        this.router.navigate(['/user-dashboard']);
       },
       error: err => {
-        this.error = err.error?.message ?? 'Hiba történt';
+        console.error('REGISTER ERROR:', err);
+        this.isLoading = false;
+        this.error = err.error?.message ?? 'Hiba történt a regisztráció során.';
       }
     });
   }
