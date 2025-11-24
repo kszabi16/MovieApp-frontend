@@ -3,11 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environments';
 import { UserStatistics } from '../models/statistics.models';
+import { TopRatedMovie } from '../models/statistics.models';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class StatisticsService {
+
+  
 
   private baseUrl = `${environment.apiUrl}/statistics`;
 
@@ -16,4 +20,9 @@ export class StatisticsService {
   getMostActiveUsers(count: number = 20): Observable<UserStatistics[]> {
     return this.http.get<UserStatistics[]>(`${this.baseUrl}/active-users?count=${count}`);
   }
+  getTopRated(count: number = 10): Observable<TopRatedMovie[]> {
+  return this.http.get<TopRatedMovie[]>(`${this.baseUrl}/top-rated?count=${count}`, {
+    params: { count: count }
+  });
+}
 }

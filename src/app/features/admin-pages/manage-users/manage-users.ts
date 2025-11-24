@@ -3,6 +3,7 @@ import { UserApiService, UserProfile } from '../../../core/services/user-profile
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { create } from 'domain';
 
 @Component({
   selector: 'app-manage-users',
@@ -17,14 +18,15 @@ export class ManageUsersComponent implements OnInit {
   error: string | null = null;
 
 
-  selectedUser: UserProfile | null = null; // szerkesztéshez
-  editMode = false;
-  addMode: boolean = false;
-newUser: UserProfile = {
+isFormOpen = false;
+isEditing = false;
+
+formModel = {
   id: 0,
   username: '',
   email: '',
   role: 'User',
+  password: '',
   createdAt: ''
 };
 
@@ -33,30 +35,31 @@ newUser: UserProfile = {
   ngOnInit(): void {
     this.loadUsers();
   }
-  openAddModal() {
-  this.addMode = true;
-  this.newUser = {
+ 
+openAddForm() {
+  this.isFormOpen = true;
+  this.isEditing = false;
+
+  this.formModel = {
     id: 0,
     username: '',
     email: '',
     role: 'User',
+    password: '',
     createdAt: ''
   };
 }
 
-cancelAdd() {
-  this.addMode = false;
-}
+
+
 
 createUser() {
-  this.userApi.createUser(this.newUser).subscribe({
+  this.userApi.createUser(this.formModel).subscribe({
     next: () => {
-      this.addMode = false;
+      this.isFormOpen = false;
       this.loadUsers();
     },
-    error: err => {
-      console.error(err);
-    }
+    error: err => console.error(err)
   });
 }
 
@@ -74,22 +77,15 @@ createUser() {
     });
   }
 
-  editUser(user: UserProfile) {
-    this.selectedUser = { ...user };
-    this.editMode = true;
-  }
 
-  saveUser() {
-    if (!this.selectedUser) return;
-
-    this.userApi.updateUser(this.selectedUser).subscribe({
-      next: () => {
-        this.editMode = false;
-        this.selectedUser = null;
-        this.loadUsers();
-      }
-    });
-  }
+updateUser() {
+  this.userApi.updateUser(this.formModel).subscribe({
+    next: () => {
+      this.isFormOpen = false;
+      this.loadUsers();
+    }
+  });
+}
 
   deleteUser(id: number) {
     if (!confirm('Biztos törlöd a felhasználót?')) return;
@@ -101,8 +97,44 @@ createUser() {
     });
   }
 
-  cancelEdit() {
-    this.editMode = false;
-    this.selectedUser = null;
+
+
+// ===== Szerkesztés =====
+openEditForm(user: UserProfile) {
+  this.isFormOpen = true;
+  this.isEditing = true;
+
+  this.formModel = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    password: '',
+    createdAt:''   // jelszó nem változik
+  };
+}
+
+// ===== MENTÉS VAGY HOZZÁADÁS =====
+saveForm() {
+  if (this.isEditing) {
+    // FELHASZNÁLÓ MÓDOSÍTÁSA
+    this.userApi.updateUser(this.formModel).subscribe(() => {
+      this.isFormOpen = false;
+      this.loadUsers();
+    });
+  } else {
+    // ÚJ FELHASZNÁLÓ HOZZÁADÁSA
+    this.userApi.createUser(this.formModel).subscribe(() => {
+      this.isFormOpen = false;
+      this.loadUsers();
+    });
   }
 }
+
+cancelForm() {
+  this.isFormOpen = false;
+}
+
+}
+
+

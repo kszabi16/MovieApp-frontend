@@ -73,21 +73,45 @@ export class UserDashboardComponent implements OnInit {
       data.favorites.forEach((f: any) => this.myFavorites.add(f.movieId));
       data.seenHistory.forEach((s: any) => this.mySeen.add(s.movieId));
 
-      const genreSet = new Set<string>();
+          const genreSet = new Set<string>();
       this.movies.forEach(m => {
-        if (m.genres && Array.isArray(m.genres)) {
-          m.genres.forEach(g => genreSet.add(g));
-        }
+        const names = this.getMovieGenreNames(m);
+        names.forEach(genreName => {
+          if (genreName) genreSet.add(genreName);
+        });
       });
       this.allGenres = Array.from(genreSet).sort();
 
-      this.isLoading = false;
-    });
-  }
+            this.isLoading = false;
+          });
+        }
 
   isFavorite(movieId: number): boolean {
     return this.myFavorites.has(movieId);
   }
+  private getMovieGenreNames(m: Movie): string[] {
+
+  if ((m as any).genres && Array.isArray((m as any).genres)) {
+    
+    return ((m as any).genres as string[]).map(x => (x ?? '').toString());
+  }
+
+  
+  if ((m as any).genreIds && Array.isArray((m as any).genreIds)) {
+    const ids: number[] = (m as any).genreIds;
+   
+    if ((this as any).genres && Array.isArray((this as any).genres)) {
+      return ids.map(id => {
+        const found = (this as any).genres.find((gg: any) => gg.id === id);
+        return found ? found.name : `#${id}`;
+      });
+    }
+    return ids.map(id => `#${id}`);
+  }
+
+  
+  return [];
+}
 
   isSeen(movieId: number): boolean {
     return this.mySeen.has(movieId);
@@ -221,46 +245,51 @@ export class UserDashboardComponent implements OnInit {
     this.searchTerm = genre;
     this.genreSuggestions = [];
   }
+private getGenres(movie: Movie): string[] {
+  return movie.genres?.map(g => g.toLowerCase()) ?? [];
+}
+get filteredMovies(): Movie[] {
+  const term = this.searchTerm.trim().toLowerCase();
 
-  get filteredMovies(): Movie[] {
-    const term = this.searchTerm.trim().toLowerCase();
+  // --- GENRE FILTER ---
+  if (this.searchField === 'genre') {
+    if (!this.selectedGenre) return this.movies;
 
-    if (this.searchField === 'genre') {
-      if (!this.selectedGenre) {
-        return this.movies;
-      }
+    const selected = this.selectedGenre.toLowerCase();
 
-      return this.movies.filter(m =>
-        (m.genres || []).includes(this.selectedGenre as string)
-      );
-    }
-
-    if (!term) {
-      return this.movies;
-    }
-
-    return this.movies.filter(movie => {
-      const title = movie.title?.toLowerCase() ?? '';
-      const description = movie.description?.toLowerCase() ?? '';
-      const director = (movie as any).director?.toLowerCase() ?? '';
-      const genres = (movie.genres ?? []).map(g => g.toLowerCase());
-
-      switch (this.searchField) {
-        case 'title':
-          return title.includes(term);
-
-        case 'director':
-          return director.includes(term);
-
-        case 'all':
-        default:
-          return (
-            title.includes(term) ||
-            description.includes(term) ||
-            director.includes(term) ||
-            genres.some(g => g.includes(term))
-          );
-      }
-    });
+    return this.movies.filter(m =>
+      this.getGenres(m).some(genreName => genreName.toLowerCase() === selected)
+    );
   }
+
+  // --- ÜRES KERESŐ ---
+  if (!term) return this.movies;
+
+  // --- ÁLTALÁNOS KERESÉS ---
+  return this.movies.filter(movie => {
+    const title = movie.title?.toLowerCase() ?? '';
+    const description = movie.description?.toLowerCase() ?? '';
+    const director = movie.director?.toLowerCase() ?? '';
+    const genreNames = this.getGenres(movie).map(g => g.toLowerCase());
+
+    switch (this.searchField) {
+      case 'title':
+        return title.includes(term);
+
+      case 'director':
+        return director.includes(term);
+
+      case 'all':
+      default:
+        return (
+          title.includes(term) ||
+          description.includes(term) ||
+          director.includes(term) ||
+          genreNames.some(g => g.includes(term))
+        );
+    }
+  });
+}
+
+
 }

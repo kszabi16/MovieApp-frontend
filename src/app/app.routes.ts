@@ -16,7 +16,10 @@ import { ManageMoviesComponent } from '../app/features/admin-pages/manage-movies
 
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { ManageUsersComponent } from './features/admin-pages/manage-users/manage-users';
-
+/*import {MostViewedPage} from "../app/features/statistics-pages/";*/
+import {TopRatedMovies} from "../app/features/statistics-pages/top-rated/top-rated-movies";
+/*import {MostFavoritedPage} from "./pages/MostFavoritedPage";
+import {PopularGenresPage} from "./pages/PopularGenresPage";*/
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,6 +30,9 @@ export const routes: Routes = [
     component: AdminDashboardComponent, 
     canActivate: [roleGuard('Admin')] 
   },
+ 
+  {path: 'top-rated', component: TopRatedMovies},
+ 
 
 
   { 

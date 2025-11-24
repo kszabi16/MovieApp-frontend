@@ -5,3 +5,10 @@ export interface UserStatistics {
   totalRatings: number;
   totalFavorites: number;
 }
+export interface TopRatedMovie {
+  id: number;
+  title: string;
+  averageRating: number;
+  posterUrl: string;
+  genres: string[];
+}

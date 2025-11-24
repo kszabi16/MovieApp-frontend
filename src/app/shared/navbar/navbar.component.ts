@@ -53,4 +53,7 @@ export class NavbarComponent {
   goToLeaderboard(): void {
     this.router.navigate(['/leaderboard']);
   }
+  goToTopRated(): void {
+    this.router.navigate(['/top-rated']);
+  }
 }

@@ -19,6 +19,7 @@ export interface ViewHistoryDto {
 }
 
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -75,4 +76,5 @@ export class MovieService {
       console.log(`Film törölve: ${id}`);
     }));
   }
+  
 }

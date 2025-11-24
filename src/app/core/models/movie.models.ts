@@ -5,10 +5,9 @@ export interface Movie {
   releaseYear: number;
   posterUrl: string; 
   averageRating: number; 
-
   director: string; 
-
-  genres: string[]; 
+  genres: string[]
+  genreIds: number[];
 }
 
 export interface CreateMovieDto {
@@ -17,7 +16,7 @@ export interface CreateMovieDto {
   releaseYear: number;
   posterUrl?: string;
   director?: string;
-  genres: string[];
+  genreIds: number[]
 }
 
 export interface UpdateMovieDto {
@@ -27,7 +26,7 @@ export interface UpdateMovieDto {
   releaseYear: number;
   posterUrl?: string;
   director?: string;
-  genres: string[];
+  genreIds: number[]
 }
 
 export interface GenreDto {

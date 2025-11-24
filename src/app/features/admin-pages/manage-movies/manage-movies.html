@@ -80,12 +80,14 @@
       <p class="media-desc">
         {{ movie.description }}
       </p>
-
-      <div class="tags-container">
-        <span class="tag" *ngFor="let genre of movie.genres">
-          {{ genre }}
-        </span>
-      </div>
+      <div class="rating">
+  ⭐ {{ movie.averageRating }}/10
+</div>
+<div class="tags-container">
+  <span class="tag" *ngFor="let genre of movie.genres">
+    {{ genre }}
+  </span>
+</div>
 
       <div class="buttons-row">
         <button class="admin-btn btn-edit" (click)="editMovie(movie)">
@@ -140,10 +142,10 @@
       <div class="genre-section">
         <p>Műfajok:</p>
         <div class="genre-list">
-          <label *ngFor="let g of genres">
-            <input type="checkbox"
-                   [checked]="selectedGenres.includes(g.name)"
-                   (change)="onGenreChange(g.name)" />
+                    <label *ngFor="let g of genres">
+           <input type="checkbox"
+       [checked]="(formModel.genreIds || []).includes(g.id)"
+       (change)="onGenreCheckboxChanged($event, g.id)" />
             {{ g.name }}
           </label>
         </div>

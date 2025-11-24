@@ -21,6 +21,10 @@
       <button *ngIf="role === 'User'" class="nav-item" (click)="goToFavorites()" routerLinkActive="active">
         <span class="icon">♥</span> Kedvencek
       </button>
+      <button *ngIf="role === 'User'" class="nav-item" (click)="goToTopRated()" routerLinkActive="active">
+        <span class="icon">⭐
+        </span> Legjobbak
+      </button>
     </div>
 
     <div class="nav-actions">
