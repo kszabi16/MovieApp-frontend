@@ -5,7 +5,7 @@
       <span class="brand-text">MOVIE<span class="highlight">APP</span></span>
     </div>
 
-    <div class="nav-links">
+    <div class="nav-links" *ngIf="showUserNav">
       <button class="nav-item" (click)="goToMovies()" routerLinkActive="active">
         <span class="icon">🎬</span> Filmek
       </button>
@@ -21,14 +21,18 @@
       <button *ngIf="role === 'User'" class="nav-item" (click)="goToFavorites()" routerLinkActive="active">
         <span class="icon">♥</span> Kedvencek
       </button>
+
       <button *ngIf="role === 'User'" class="nav-item" (click)="goToTopRated()" routerLinkActive="active">
-        <span class="icon">⭐
-        </span> Legjobbak
+        <span class="icon">⭐</span> Legjobbak
       </button>
     </div>
 
     <div class="nav-actions">
-      <button class="nav-item profile-btn" (click)="goToProfile()" routerLinkActive="active">
+      <button
+        class="nav-item profile-btn"
+        *ngIf="showUserNav"
+        (click)="goToProfile()"
+        routerLinkActive="active">
         <span class="icon">👤</span> Profil
       </button>
 

@@ -8,14 +8,14 @@ export interface UserProfile {
   username: string;
   email: string;
   role: string;
-  password?: string;
   createdAt: string;
+  password?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserApiService {
+export class UserService {
   private baseUrl = `${environment.apiUrl}/user`;
 
   constructor(private http: HttpClient) {}
@@ -27,14 +27,16 @@ export class UserApiService {
   updateUser(user: UserProfile): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${this.baseUrl}/${user.id}`, user);
   }
-  createUser(user: UserProfile): Observable<UserProfile> {
-  return this.http.post<UserProfile>(`${this.baseUrl}`, user);
-}
-deleteUser(id: number): Observable<void> {
-  return this.http.delete<void>(`${this.baseUrl}/${id}`);
-}
-getAllUsers(): Observable<UserProfile[]> {
-  return this.http.get<UserProfile[]>(`${this.baseUrl}`);
-}
 
+  createUser(user: UserProfile): Observable<UserProfile> {
+    return this.http.post<UserProfile>(`${this.baseUrl}`, user);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getAllUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${this.baseUrl}`);
+  }
 }

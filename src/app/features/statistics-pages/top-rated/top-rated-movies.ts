@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { StatisticsService } from '../../../core/services/statistics.service';
 import { TopRatedMovie } from '../../../core/models/statistics.models';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-top-rated-movies',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './top-rated-movies.html',
   styleUrls: ['./top-rated-movies.css']
 })

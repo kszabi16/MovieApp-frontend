@@ -25,17 +25,20 @@ export class NavbarComponent {
     return this.authService.role;
   }
 
+   get showUserNav(): boolean {
+    const onAdminDashboard = this.router.url.startsWith('/admin-dashboard') ||
+    this.router.url.startsWith('/manage-movies') ||
+    this.router.url.startsWith('/manage-users');
+    return !(this.role === 'Admin' && onAdminDashboard);
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
   goToMovies(): void {
-    if (this.role === 'Admin') {
-      this.router.navigate(['/user-dashboard']);
-    } else {
-      this.router.navigate(['/user-dashboard']);
-    }
+    this.router.navigate(['/user-dashboard']); 
   }
 
   goToProfile(): void {

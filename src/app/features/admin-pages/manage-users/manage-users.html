@@ -1,118 +1,149 @@
+<div class="manage-users-page">
+  <div class="content-wrapper">
 
-
-<div class="p-6">
-
-
-
-
- <header class="page-header">
-      <h1 class="title">Felhasználók kezelése</h1>
+    <!-- Header -->
+    <header class="page-header">
+      <h1 class="title">Felhasználók Kezelése</h1>
       <div class="decoration-line"></div>
+      <p class="subtitle">Regisztrált fiókok karbantartása</p>
     </header>
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="text-gray-300">Betöltés...</div>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="loader"></div>
+      <p>Adatok betöltése...</p>
+    </div>
 
-  <!-- Error -->
-  <div *ngIf="error" class="text-red-400">{{ error }}</div>
-    
-            <div class="button-container">
-               
-    <button class="btn-add"routerLink="/admin-dashboard">Vissza</button>
-</div>
-  <!-- Users Table -->
-  <!-- Users Table (Custom Scroll + Fixed Header) -->
-<div *ngIf="!loading">
+    <!-- Error State -->
+    <div *ngIf="error" class="error-msg">
+      {{ error }}
+    </div>
 
-  <div class="tbl-header">
-    <table>
-      <thead>
-        <tr>
-          <th class="actions-col">ID</th>
-          <th class="actions-col">Felhasználónév</th>
-          <th class="actions-col">Email</th>
-          <th class="actions-col">Szerepkör</th>
-          <th class="actions-col">Létrehozva</th>
-          <th class="actions-col">Műveletek</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
+    <div *ngIf="!loading" class="content-container">
+      
+      <!-- Toolbar (Vissza és Hozzáadás gombok) -->
+      <div class="toolbar">
+        <button class="btn btn-secondary" routerLink="/admin-dashboard">
+          ← Vissza a Dashboardra
+        </button>
+        
+        <!-- Feltételezem, hogy az openEditForm paraméter nélkül hívva új felhasználót hoz létre -->
+        <button class="btn btn-add" (click)="openEditForm()">
+          <span class="icon">+</span> Új Felhasználó
+        </button>
+      </div>
 
-  <div class="tbl-content">
-    <table>
-      <tbody>
-        <tr *ngFor="let user of users">
+      <!-- Users Table -->
+      <div class="table-container glass-panel">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th class="col-id">ID</th>
+              <th class="col-user">Felhasználónév</th>
+              <th class="col-email">Email</th>
+              <th class="col-role text-center">Szerepkör</th>
+              <th class="col-date text-right">Létrehozva</th>
+              <th class="col-actions text-right">Műveletek</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users" class="data-row">
+              
+              <td class="col-id">
+                <span class="id-badge">#{{ user.id }}</span>
+              </td>
+              
+              <td class="col-user">
+                <span class="username">{{ user.username }}</span>
+              </td>
+              
+              <td class="col-email">
+                <span class="email-text">{{ user.email }}</span>
+              </td>
 
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.email }}</td>
+              <td class="col-role text-center">
+                <span class="role-badge" 
+                      [class.role-admin]="user.role === 'Admin'"
+                      [class.role-user]="user.role === 'User'">
+                  {{ user.role }}
+                </span>
+              </td>
 
-          <td>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold"
-              [ngClass]="{
-                'bg-blue-600': user.role === 'Admin',
-                'bg-green-600': user.role === 'User'
-              }">
-              {{ user.role }}
-            </span>
-          </td>
+              <td class="col-date text-right">
+                {{ user.createdAt | date:'yyyy. MM. dd.' }}
+              </td>
 
-          <td>{{ user.createdAt | date:'yyyy-MM-dd' }}</td>
+              <td class="col-actions text-right">
+                <div class="action-buttons">
+                  <button class="btn-icon edit" (click)="openEditForm(user)" title="Szerkesztés">
+                    ✏️
+                  </button>
+                  <button class="btn-icon delete" (click)="deleteUser(user.id)" title="Törlés">
+                    🗑️
+                  </button>
+                </div>
+              </td>
 
-          <td style="display: flex; gap: 10px;">
-            <button class="btn-add" (click)="openEditForm(user)">Szerkesztés</button>
-            <button class="btn-add" (click)="deleteUser(user.id)">Törlés</button>
-          </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-
-
-  
-    
-
-</div>
-
- 
-  <!-- USER MODAL -->
-<div class="modal-overlay" [class.active]="isFormOpen">
-  <div class="modal modal-open">
-
-    <!-- DINAMIKUS CÍM -->
-    <h2 class="text-xl font-semibold mb-4 text-white">
-      {{ isEditing ? 'Felhasználó szerkesztése' : 'Új felhasználó hozzáadása' }}
-    </h2>
-
-    <label>Felhasználónév</label>
-    <input [(ngModel)]="formModel.username">
-
-    <label>Email</label>
-    <input [(ngModel)]="formModel.email">
-
-    <label>Szerepkör</label><br>
-    <select [(ngModel)]="formModel.role">
-      <option value="Admin">Admin</option>
-      <option value="User">User</option>
-    </select>
-<br>
-    <!-- JELSZÓ CSAK HOZZÁADÁSKOR -->
-    <label *ngIf="!isEditing">Jelszó</label>
-    <input *ngIf="!isEditing" type="password" [(ngModel)]="formModel.password">
-
-    <div class="flex justify-end gap-3">
-      <button (click)="cancelForm()" class="btn-add">Mégse</button>
-
-      <!-- DINAMIKUS GOMB -->
-      <button (click)="saveForm()" class="btn-add">
-        {{ isEditing ? 'Mentés' : 'Hozzáadás' }}
-      </button>
     </div>
 
   </div>
-</div>
 
+  <!-- MODAL OVERLAY -->
+  <div class="modal-overlay" [class.active]="isFormOpen">
+    <div class="modal-container">
+      
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ isEditing ? 'Felhasználó Szerkesztése' : 'Új Felhasználó' }}
+        </h2>
+        <button class="btn-close" (click)="cancelForm()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="saveForm()" class="user-form">
+
+          <div class="form-group">
+            <label>Felhasználónév</label>
+            <input type="text" [(ngModel)]="formModel.username" name="username" class="input-field" required />
+          </div>
+
+          <div class="form-group">
+            <label>Email cím</label>
+            <input type="email" [(ngModel)]="formModel.email" name="email" class="input-field" required />
+          </div>
+
+          <div class="form-group">
+            <label>Szerepkör</label>
+            <div class="select-wrapper">
+              <select [(ngModel)]="formModel.role" name="role" class="input-field select-field">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Jelszó csak hozzáadáskor -->
+          <div class="form-group" *ngIf="!isEditing">
+            <label>Jelszó</label>
+            <input type="password" [(ngModel)]="formModel.password" name="password" class="input-field" required />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelForm()">Mégse</button>
+            <button type="submit" class="btn btn-primary">
+              {{ isEditing ? 'Mentés' : 'Létrehozás' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</div>

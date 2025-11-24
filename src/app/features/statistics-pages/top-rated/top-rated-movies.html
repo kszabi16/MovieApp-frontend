@@ -1,17 +1,78 @@
-<div class="container">
-  <h1>Top Rated Movies</h1>
+<div class="page-container">
+  <main class="content-wrapper">
+    
+    <!-- Header -->
+    <header class="page-header">
+      <h1 class="title">Top Rated Movies</h1>
+      <div class="decoration-line"></div>
+      <p class="subtitle">A közösség legjobbra értékelt filmjei</p>
+    </header>
 
-  <div *ngIf="loading" class="loading">Betöltés...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+    <!-- Loading & Error -->
+    <ng-container *ngIf="isLoading || error; else content">
+      <div *ngIf="error; else loading" class="message-box error">
+        <strong>Hiba történt:</strong> <span> {{ error }}</span>
+      </div>
+      <ng-template #loading>
+        <div class="message-box loading">
+          <div class="loader"></div>
+          <p>Lista betöltése...</p>
+        </div>
+      </ng-template>
+    </ng-container>
 
-  <div class="grid" *ngIf="!loading && !error">
-    <div class="movie-card" *ngFor="let movie of movies">
-      <img [src]="movie.posterUrl" [alt]="movie.title" />
-      <h3>{{ movie.title }}</h3>
-      <h2>{{movie.genres}}</h2>
-      <div class="rating">
-  ⭐ {{ movie.averageRating }}/10
-</div>
-    </div>
-  </div>
+    <!-- Content Grid -->
+    <ng-template #content>
+      
+      <div class="media-grid" *ngIf="movies.length > 0; else empty">
+        <div class="media-card" *ngFor="let movie of movies; let i = index">
+          
+          <!-- Poster -->
+          <div class="poster-wrapper">
+            <img 
+              [src]="movie.posterUrl" 
+              [alt]="movie.title" 
+              class="poster-image"
+              onerror="this.src='https://placehold.co/400x600/0f1623/ffffff?text=No+Cover'"
+            />
+            <div class="poster-overlay"></div>
+            
+            <!-- Top 3 Badge -->
+            <div *ngIf="i < 3" class="rank-badge" [class.gold]="i===0" [class.silver]="i===1" [class.bronze]="i===2">
+              #{{ i + 1 }}
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <h3 class="media-title" [title]="movie.title">{{ movie.title }}</h3>
+            
+            <!-- Genres (Tag-ként jelenítjük meg) -->
+            <div class="tags-container">
+              <span class="tag" *ngFor="let genre of movie.genres">{{ genre }}</span>
+            </div>
+
+            <div class="spacer"></div>
+
+            <!-- Rating -->
+            <div class="rating-badge">
+              <span class="star">⭐</span> 
+              <span class="score">{{ movie.averageRating | number:'1.1-1' }}</span>
+              <span class="max">/10</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <ng-template #empty>
+        <div class="empty-state">
+          <div class="empty-icon">🏆</div>
+          <p>Nincs megjeleníthető toplista.</p>
+        </div>
+      </ng-template>
+
+    </ng-template>
+
+  </main>
 </div>

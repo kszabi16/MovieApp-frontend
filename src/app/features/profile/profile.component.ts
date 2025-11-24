@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { UserApiService, UserProfile } from '../../core/services/user-profile.service';
+// JAVÍTVA: Helyes import a user.service-ből (nem user-profile.service)
+import { UserService, UserProfile } from '../../core/services/user-profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +22,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userApi: UserApiService,
+    private userService: UserService, // JAVÍTVA: UserApiService -> UserService
     private router: Router
   ) {}
 
@@ -33,9 +34,16 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const id = currentUser.id;
+    // Biztosítjuk, hogy az ID szám legyen (backend int-et vár)
+    const id = Number(currentUser.id);
 
-    this.userApi.getUserById(id).subscribe({
+    if (isNaN(id)) {
+        this.error = "Érvénytelen felhasználói azonosító.";
+        this.isLoading = false;
+        return;
+    }
+
+    this.userService.getUserById(id).subscribe({
       next: (user) => {
         this.profile = user;
         this.isLoading = false;
@@ -58,13 +66,24 @@ export class ProfileComponent implements OnInit {
     this.error = null;
     this.success = null;
 
-    this.userApi.updateUser(this.profile).subscribe({
+    this.userService.updateUser(this.profile).subscribe({
       next: (updated) => {
         this.profile = updated;
 
-        localStorage.setItem('user', JSON.stringify(updated));
+        // Opcionális: LocalStorage frissítése, ha a user objektum struktúrája egyezik
+        // Vigyázz: a 'user' a login válaszából, a 'updated' a profilból jön, lehet eltérés
+        // const currentUser = this.authService.user;
+        // if (currentUser) {
+        //    const mergedUser = { ...currentUser, ...updated };
+        //    localStorage.setItem('user', JSON.stringify(mergedUser));
+        // }
 
         this.success = 'Profil sikeresen frissítve.';
+        
+        // Sikerüzenet eltüntetése 3 másodperc múlva
+        setTimeout(() => {
+            this.success = null;
+        }, 3000);
       },
       error: (err) => {
         console.error('Profil mentési hiba:', err);
