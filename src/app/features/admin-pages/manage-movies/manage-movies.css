@@ -60,6 +60,8 @@
   gap: 2rem;
   margin-bottom: 3rem;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 50;
 }
 
 .search-bar {
@@ -119,13 +121,15 @@
 
 /* Dropdowns */
 .dropdown-menu, .suggestions-menu {
-  position: absolute; top: 110%; left: 20px;
+  position: absolute;
+  top: 110%;
+  left: 20px;
   background: var(--bg-card);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
   overflow: hidden;
   min-width: 150px;
-  z-index: 50;
+  z-index: 999999 !important;   /* NAGYOBB, BIZTOSABB */
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .suggestions-menu { left: 50%; transform: translateX(-50%); width: 90%; }
@@ -169,8 +173,9 @@
 /* --- Movie Grid --- */
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 2rem;
+  align-items: stretch;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -204,23 +209,97 @@
   padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;
   border: 1px solid rgba(255,255,255,0.2);
 }
-
+:host {
+  position: relative;
+  z-index: 999999 !important;
+}
+.media-grid,
+.media-card,
+.poster-wrapper {
+  position: relative;
+  z-index: 1;
+}
+.top-controls,
+.search-bar-wrapper,
+.search-container,
+.filter-container {
+  position: relative;
+  z-index: 999999 !important;
+}
 .card-body {
   padding: 1.5rem;
   display: flex; flex-direction: column; flex-grow: 1;
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 
+.suggestions-menu {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+}
+
+.dropdown-item, .suggestion-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 15px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover, .suggestion-item:hover {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--primary);
+}
+
 .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-.media-title { font-size: 1.2rem; font-weight: 700; margin: 0; color: #fff; line-height: 1.2; }
+.media-title { font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; line-height: 1.3;height: 2.6rem;overflow: hidden; }
 .media-year { font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; }
+.media-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  height: 5rem; 
+  overflow: hidden;
+}
 
 .media-director { font-size: 0.85rem; color: var(--primary); margin-bottom: 0.5rem; }
 .media-desc {
   font-size: 0.9rem; color: var(--text-muted);
   display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   margin-bottom: 1rem;
+  flex-grow: 1;
+  min-height: 120px;
 }
+.media-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.media-desc {
+  min-height: 110px; /* állítható: 90–140 */
+  overflow: hidden;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;  /* EZ TESZI EGY VONALBA A CHIPEKET */
+  margin-bottom: 1rem;
+}
+
 
 .rating-row { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; }
 .rating-star { color: #ffd700; }
@@ -230,6 +309,7 @@
   font-size: 0.7rem; text-transform: uppercase; padding: 4px 8px; border-radius: 4px;
   background: rgba(0, 240, 255, 0.1); color: var(--primary); border: 1px solid rgba(0, 240, 255, 0.2);
 }
+
 
 .spacer { flex-grow: 1; }
 

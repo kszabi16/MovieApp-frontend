@@ -9,7 +9,7 @@
     </header>
 
     <!-- Loading & Error -->
-    <ng-container *ngIf="isLoading || error; else content">
+    <ng-container *ngIf="loading || error; else content">
       <div *ngIf="error; else loading" class="message-box error">
         <strong>Hiba történt:</strong> <span> {{ error }}</span>
       </div>
