@@ -1,17 +1,14 @@
 <div class="admin-page">
   <div class="content-wrapper">
-    
-    <!-- Header -->
+
     <header class="page-header">
       <h1 class="title">Film Kezelő</h1>
       <div class="decoration-line"></div>
       <p class="subtitle">Adminisztrációs felület</p>
     </header>
 
-    <!-- Search & Toolbar -->
     <div class="toolbar-section">
-      
-      <!-- Search Bar -->
+
       <div class="search-bar">
         
         <button type="button" class="filter-toggle-btn" (click)="toggleSearchDropdown()">
@@ -30,7 +27,6 @@
           <span class="icon">🔍</span>
         </div>
 
-        <!-- Dropdown menu -->
         <div *ngIf="isSearchDropdownOpen" class="dropdown-menu fade-in">
           <button class="dropdown-item" (click)="setSearchField('all')">Minden</button>
           <button class="dropdown-item" (click)="setSearchField('title')">Cím</button>
@@ -38,7 +34,6 @@
           <button class="dropdown-item" (click)="setSearchField('genre')">Műfaj</button>
         </div>
 
-        <!-- Genre suggestions -->
         <div *ngIf="searchField === 'genre' && genreSuggestions.length > 0 && searchTerm" class="suggestions-menu fade-in">
           <button *ngFor="let g of genreSuggestions" class="suggestion-item" (click)="selectGenre(g)">
             {{ g }}
@@ -47,7 +42,6 @@
 
       </div>
 
-      <!-- Action Buttons -->
       <div class="action-buttons">
         <button class="btn btn-secondary" routerLink="/admin-dashboard">
           ← Vissza a Dashboardra
@@ -60,7 +54,6 @@
 
     </div>
 
-    <!-- Movie Grid -->
     <div *ngIf="filteredMovies.length > 0; else emptyState" class="media-grid">
       <div *ngFor="let movie of filteredMovies" class="media-card">
 
@@ -112,7 +105,6 @@
       </div>
     </div>
 
-    <!-- Empty State -->
     <ng-template #emptyState>
       <div class="empty-message">
         <div class="empty-icon">📭</div>
@@ -122,9 +114,8 @@
 
   </div>
 
-  <!-- MODAL OVERLAY -->
-  <div class="modal-overlay" [class.active]="isFormOpen" (click)="closeForm()"> <!-- Klikk a háttérre bezárja (opcionális) -->
-    <div class="modal-container" (click)="$event.stopPropagation()"> <!-- Megakadályozza a bezárást ha a formra kattintasz -->
+  <div class="modal-overlay" [class.active]="isFormOpen" (click)="closeForm()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
       
       <div class="modal-header">
         <h2 class="modal-title">{{ editingMovie ? 'Film Szerkesztése' : 'Új Film Hozzáadása' }}</h2>

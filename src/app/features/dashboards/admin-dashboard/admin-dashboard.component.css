@@ -1,7 +1,7 @@
 :host {
   display: block;
-  --primary: #00f0ff;       /* Cyan */
-  --secondary: #7000ff;     /* Purple */
+  --primary: #00f0ff;
+  --secondary: #7000ff;
   --bg-dark: #050b14;
   --bg-card: #0f1623;
   --text-main: #ffffff;
@@ -12,7 +12,6 @@
 .admin-page {
   min-height: 100vh;
   background-color: var(--bg-dark);
-  /* Finom háttér textúra */
   background-image: radial-gradient(circle at 50% 0%, #1a2332 0%, var(--bg-dark) 80%);
   color: var(--text-main);
   font-family: 'Segoe UI', Roboto, sans-serif;
@@ -28,7 +27,6 @@
   text-align: center;
 }
 
-/* --- Header --- */
 .page-header { margin-bottom: 4rem; animation: fadeInDown 0.6s ease; }
 
 @keyframes fadeInDown {
@@ -43,6 +41,7 @@
   letter-spacing: 3px;
   margin: 0;
   background: linear-gradient(90deg, var(--primary), #fff);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -57,7 +56,6 @@
 
 .subtitle { color: var(--text-muted); font-size: 1.1rem; margin: 0; letter-spacing: 0.5px; }
 
-/* --- Dashboard Grid --- */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -70,7 +68,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Action Cards --- */
 .action-card {
   background-color: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -83,10 +80,9 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   overflow: hidden;
-  text-decoration: none; /* Ha linkként viselkedik */
+  text-decoration: none;
 }
 
-/* Hover Effect: Neon Glow Border & Lift */
 .action-card:hover {
   transform: translateY(-10px);
   background-color: rgba(15, 22, 35, 0.8);
@@ -105,7 +101,6 @@
 
 .action-card:hover::before { opacity: 1; }
 
-/* Icon */
 .card-icon {
   font-size: 3.5rem;
   margin-bottom: 1.5rem;
@@ -122,7 +117,6 @@
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
 }
 
-/* Content */
 .card-content h2 {
   color: #fff;
   font-size: 1.5rem;
@@ -137,7 +131,6 @@
   margin: 0;
 }
 
-/* Arrow */
 .card-arrow {
   margin-top: 2rem;
   font-size: 1.5rem;
@@ -152,7 +145,6 @@
   transform: translateX(0);
 }
 
-/* --- Responsive --- */
 @media (max-width: 768px) {
   .content-wrapper { padding: 1rem; }
   .title { font-size: 2rem; }

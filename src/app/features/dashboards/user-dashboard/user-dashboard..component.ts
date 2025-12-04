@@ -251,7 +251,6 @@ private getGenres(movie: Movie): string[] {
 get filteredMovies(): Movie[] {
   const term = this.searchTerm.trim().toLowerCase();
 
-  // --- GENRE FILTER ---
   if (this.searchField === 'genre') {
     if (!this.selectedGenre) return this.movies;
 
@@ -262,10 +261,8 @@ get filteredMovies(): Movie[] {
     );
   }
 
-  // --- ÜRES KERESŐ ---
   if (!term) return this.movies;
 
-  // --- ÁLTALÁNOS KERESÉS ---
   return this.movies.filter(movie => {
     const title = movie.title?.toLowerCase() ?? '';
     const description = movie.description?.toLowerCase() ?? '';

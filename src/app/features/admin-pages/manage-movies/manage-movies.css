@@ -1,7 +1,7 @@
 :host {
   display: block;
-  --primary: #00f0ff;       /* Cyan */
-  --secondary: #7000ff;     /* Purple */
+  --primary: #00f0ff;
+  --secondary: #7000ff;
   --bg-dark: #050b14;
   --bg-card: #0f1623;
   --bg-input: #111827;
@@ -26,7 +26,6 @@
   padding: 2rem;
 }
 
-/* --- Header --- */
 .page-header { margin-bottom: 3rem; }
 
 .title {
@@ -52,7 +51,6 @@
 
 .subtitle { color: var(--text-muted); font-size: 1rem; margin: 0; }
 
-/* --- Toolbar & Search --- */
 .toolbar-section {
   display: flex;
   justify-content: space-between;
@@ -119,7 +117,6 @@
   opacity: 0.7;
 }
 
-/* Dropdowns */
 .dropdown-menu, .suggestions-menu {
   position: absolute;
   top: 110%;
@@ -129,7 +126,7 @@
   border-radius: 12px;
   overflow: hidden;
   min-width: 150px;
-  z-index: 999999 !important;   /* NAGYOBB, BIZTOSABB */
+  z-index: 999999 !important;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .suggestions-menu { left: 50%; transform: translateX(-50%); width: 90%; }
@@ -143,7 +140,6 @@
   background: rgba(0, 240, 255, 0.1); color: var(--primary);
 }
 
-/* --- Buttons --- */
 .btn {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -155,7 +151,7 @@
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
-  justify-content: center; /* Szöveg középre igazítása */
+  justify-content: center;
   gap: 0.5rem;
   letter-spacing: 0.5px;
 }
@@ -170,7 +166,6 @@
   box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
 }
 
-/* --- Movie Grid --- */
 .media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -190,7 +185,7 @@
   flex-direction: column;
   transition: transform 0.3s, border-color 0.3s;
   position: relative;
-  height: 100%; /* Kártya teljes magasságának kitöltése */
+  height: 100%;
 }
 
 .media-card:hover {
@@ -288,7 +283,7 @@
 }
 
 .media-desc {
-  min-height: 110px; /* állítható: 90–140 */
+  min-height: 110px;
   overflow: hidden;
 }
 
@@ -296,7 +291,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: auto;  /* EZ TESZI EGY VONALBA A CHIPEKET */
+  margin-top: auto;
   margin-bottom: 1rem;
 }
 
@@ -313,9 +308,7 @@
 
 .spacer { flex-grow: 1; }
 
-/* --- Card Actions (MODIFIED) --- */
 .card-actions {
-  /* Grid helyett Flex Column */
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -325,7 +318,7 @@
 }
 
 .btn-edit, .btn-delete {
-  width: 100%; /* Teljes szélesség */
+  width: 100%;
 }
 
 .btn-edit { background: rgba(0, 240, 255, 0.1); color: var(--primary); border: 1px solid rgba(0, 240, 255, 0.3); }
@@ -334,7 +327,6 @@
 .btn-delete { background: rgba(255, 0, 60, 0.1); color: var(--accent-red); border: 1px solid rgba(255, 0, 60, 0.3); }
 .btn-delete:hover { background: rgba(255, 0, 60, 0.2); color: #fff; }
 
-/* --- Modal Styles --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
@@ -404,7 +396,6 @@
 .btn-primary { background: var(--primary); color: #000; }
 .btn-primary:hover { box-shadow: 0 0 15px var(--primary); }
 
-/* --- Empty & Loader --- */
 .empty-message { text-align: center; padding: 5rem; color: var(--text-muted); }
 .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
 

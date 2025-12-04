@@ -1,7 +1,7 @@
 :host {
   display: block;
-  --primary: #ffd700;       /* Gold for Top Rated */
-  --secondary: #00f0ff;     /* Cyan accent */
+  --primary: #ffd700;
+  --secondary: #00f0ff;
   --bg-dark: #050b14;
   --bg-card: #0f1623;
   --text-main: #ffffff;
@@ -9,11 +9,9 @@
   --card-radius: 12px;
 }
 
-/* --- Layout --- */
 .page-container {
   min-height: 100vh;
   background-color: var(--bg-dark);
-  /* Aranyos beütésű háttér a toplistához */
   background-image: radial-gradient(circle at 50% 0%, #1a1805 0%, var(--bg-dark) 80%);
   color: var(--text-main);
   font-family: 'Segoe UI', Roboto, sans-serif;
@@ -25,7 +23,6 @@
   padding: 2rem;
 }
 
-/* --- Header --- */
 .page-header { margin-bottom: 3rem; text-align: center; animation: fadeInDown 0.6s ease; }
 
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -46,7 +43,6 @@
 
 .subtitle { color: var(--text-muted); font-size: 1.1rem; }
 
-/* --- Grid --- */
 .media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -56,10 +52,9 @@
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- Card --- */
 .media-card {
   background-color: var(--bg-card);
-  border: 1px solid rgba(255, 215, 0, 0.1); /* Halvány arany keret */
+  border: 1px solid rgba(255, 215, 0, 0.1);
   border-radius: var(--card-radius);
   overflow: hidden;
   display: flex; flex-direction: column;
@@ -74,7 +69,6 @@
   border-color: rgba(255, 215, 0, 0.4);
 }
 
-/* Poster */
 .poster-wrapper { height: 380px; position: relative; overflow: hidden; }
 .poster-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
 .media-card:hover .poster-image { transform: scale(1.05); }
@@ -84,7 +78,6 @@
   background: linear-gradient(to top, var(--bg-card) 0%, transparent 50%);
 }
 
-/* Rank Badge */
 .rank-badge {
   position: absolute; top: 10px; left: 10px;
   width: 40px; height: 40px;
@@ -99,7 +92,6 @@
 .rank-badge.silver { background: #e2e8f0; color: #000; border-color: #e2e8f0; box-shadow: 0 0 15px rgba(226, 232, 240, 0.5); }
 .rank-badge.bronze { background: #cd7f32; color: #000; border-color: #cd7f32; box-shadow: 0 0 15px rgba(205, 127, 50, 0.5); }
 
-/* Body */
 .card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
 
 .media-title {
@@ -117,7 +109,6 @@
 
 .spacer { flex-grow: 1; }
 
-/* Rating Badge */
 .rating-badge {
   background: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
@@ -130,7 +121,6 @@
 .score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
 .max { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
 
-/* States */
 .empty-state, .message-box { text-align: center; padding: 4rem; color: var(--text-muted); }
 .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
 .error { color: #ff8fa3; border: 1px solid #ff003c; background: rgba(255, 0, 60, 0.1); border-radius: 8px; }

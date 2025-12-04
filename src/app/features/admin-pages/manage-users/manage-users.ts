@@ -17,11 +17,9 @@ export class ManageUsersComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  // Modal állapota
   isFormOpen = false;
   isEditing = false;
 
-  // Form modell inicializálása
   formModel: UserProfile = {
     id: 0,
     username: '',
@@ -31,7 +29,6 @@ export class ManageUsersComponent implements OnInit {
     createdAt: ''
   };
 
-  // FIGYELEM: Ha a te service-ed neve UserApiService, cseréld ki itt a típust!
   constructor(private userApi: UserService) {}
 
   ngOnInit(): void {
@@ -52,35 +49,27 @@ export class ManageUsersComponent implements OnInit {
     });
   }
 
-  // ===== EGYIESÍTETT FORM MEGNYITÁS (JAVÍTVA) =====
-  // A user paraméter most opcionális (?). 
-  // Ha van user, akkor SZERKESZTÉS. Ha nincs, akkor HOZZÁADÁS.
   openEditForm(user?: UserProfile) {
     this.isFormOpen = true;
     
     if (user) {
-      // Szerkesztés mód
       this.isEditing = true;
-      // Másolat készítése az adatokról (hogy ne írjuk felül a táblázatot azonnal)
       this.formModel = { ...user, password: '' }; 
     } else {
-      // Hozzáadás mód (Reset)
       this.isEditing = false;
       this.formModel = {
         id: 0,
         username: '',
         email: '',
         role: 'User',
-        password: '', // Jelszó kötelező lesz új usernél
+        password: '',
         createdAt: new Date().toISOString()
       };
     }
   }
 
-  // ===== MENTÉS (KÖZÖS FÜGGVÉNY) =====
   saveForm() {
     if (this.isEditing) {
-      // UPDATE
       this.userApi.updateUser(this.formModel).subscribe({
         next: () => {
           this.isFormOpen = false;
@@ -89,7 +78,6 @@ export class ManageUsersComponent implements OnInit {
         error: (err) => console.error('Hiba frissítéskor:', err)
       });
     } else {
-      // CREATE
       this.userApi.createUser(this.formModel).subscribe({
         next: () => {
           this.isFormOpen = false;
@@ -105,7 +93,6 @@ export class ManageUsersComponent implements OnInit {
 
     this.userApi.deleteUser(id).subscribe({
       next: () => {
-        // UI frissítése kérés nélkül
         this.users = this.users.filter(u => u.id !== id);
       },
       error: (err) => console.error('Hiba törléskor:', err)

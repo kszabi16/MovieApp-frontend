@@ -5,7 +5,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
   if (isAuthEndpoint) {
-    // login/register kérésekre NE küldjünk Authorization fejléct
     return next(req);
   }
 

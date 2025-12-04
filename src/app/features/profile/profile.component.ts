@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-// JAVÍTVA: Helyes import a user.service-ből (nem user-profile.service)
 import { UserService, UserProfile } from '../../core/services/user-profile.service';
 
 @Component({
@@ -22,7 +21,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService, // JAVÍTVA: UserApiService -> UserService
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -34,7 +33,6 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // Biztosítjuk, hogy az ID szám legyen (backend int-et vár)
     const id = Number(currentUser.id);
 
     if (isNaN(id)) {
@@ -70,17 +68,8 @@ export class ProfileComponent implements OnInit {
       next: (updated) => {
         this.profile = updated;
 
-        // Opcionális: LocalStorage frissítése, ha a user objektum struktúrája egyezik
-        // Vigyázz: a 'user' a login válaszából, a 'updated' a profilból jön, lehet eltérés
-        // const currentUser = this.authService.user;
-        // if (currentUser) {
-        //    const mergedUser = { ...currentUser, ...updated };
-        //    localStorage.setItem('user', JSON.stringify(mergedUser));
-        // }
-
         this.success = 'Profil sikeresen frissítve.';
-        
-        // Sikerüzenet eltüntetése 3 másodperc múlva
+
         setTimeout(() => {
             this.success = null;
         }, 3000);

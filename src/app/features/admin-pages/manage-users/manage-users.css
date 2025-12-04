@@ -1,7 +1,7 @@
 :host {
   display: block;
-  --primary: #00f0ff;       /* Cyan */
-  --secondary: #7000ff;     /* Purple */
+  --primary: #00f0ff;
+  --secondary: #7000ff;
   --bg-dark: #050b14;
   --bg-card: #0f1623;
   --bg-input: #111827;
@@ -12,7 +12,6 @@
   --accent-red: #ff003c;
 }
 
-/* --- Layout --- */
 .manage-users-page {
   min-height: 100vh;
   background-color: var(--bg-dark);
@@ -28,7 +27,6 @@
   padding: 2rem;
 }
 
-/* --- Header --- */
 .page-header { margin-bottom: 3rem; text-align: center; }
 
 .title {
@@ -38,6 +36,7 @@
   letter-spacing: 2px;
   margin: 0;
   background: linear-gradient(90deg, var(--primary), #fff);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -52,7 +51,6 @@
 
 .subtitle { color: var(--text-muted); margin: 0; }
 
-/* --- Toolbar --- */
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -60,15 +58,14 @@
   margin-bottom: 2rem;
 }
 
-/* --- Table Styles --- */
 .table-container.glass-panel {
   background: rgba(15, 22, 35, 0.6);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
-  overflow: hidden; /* Lekerekítéshez */
+  overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  overflow-x: auto; /* Mobil görgetés */
+  overflow-x: auto;
 }
 
 .styled-table {
@@ -98,7 +95,6 @@
 .data-row { transition: background-color 0.2s; }
 .data-row:hover { background-color: rgba(255, 255, 255, 0.03); }
 
-/* --- Columns & Badges --- */
 .col-id { width: 80px; color: var(--text-muted); font-family: monospace; }
 .id-badge { background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
 
@@ -134,7 +130,6 @@
 
 .action-buttons { display: flex; justify-content: flex-end; gap: 0.5rem; }
 
-/* --- Buttons --- */
 .btn {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -176,7 +171,6 @@
   transform: translateY(-2px);
 }
 
-/* Icon Buttons (Edit/Delete) */
 .btn-icon {
   background: transparent;
   border: none;
@@ -189,7 +183,6 @@
 .btn-icon.edit:hover { background: rgba(0, 240, 255, 0.1); }
 .btn-icon.delete:hover { background: rgba(255, 0, 60, 0.1); }
 
-/* --- Modal Styles --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
@@ -201,7 +194,7 @@
 
 .modal-container {
   background: var(--bg-input);
-  border: 1px solid var(--secondary); /* Lila keret */
+  border: 1px solid var(--secondary);
   border-radius: 16px;
   width: 90%; max-width: 500px;
   padding: 2rem;
@@ -234,15 +227,13 @@
   display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;
 }
 
-/* Loader & Error */
 .loading-state, .error-msg { text-align: center; padding: 3rem; color: var(--text-muted); }
 .error-msg { color: var(--accent-red); }
 .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); width: 40px; height: 40px; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .toolbar { flex-direction: column; gap: 1rem; align-items: stretch; }
   .btn { width: 100%; justify-content: center; }
-  .col-email, .col-date { display: none; } /* Kisebb oszlopokat elrejtünk mobilon */
+  .col-email, .col-date { display: none; }
 }

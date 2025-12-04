@@ -1,39 +1,33 @@
 <div class="manage-users-page">
   <div class="content-wrapper">
 
-    <!-- Header -->
     <header class="page-header">
       <h1 class="title">Felhasználók Kezelése</h1>
       <div class="decoration-line"></div>
       <p class="subtitle">Regisztrált fiókok karbantartása</p>
     </header>
 
-    <!-- Loading State -->
     <div *ngIf="loading" class="loading-state">
       <div class="loader"></div>
       <p>Adatok betöltése...</p>
     </div>
 
-    <!-- Error State -->
     <div *ngIf="error" class="error-msg">
       {{ error }}
     </div>
 
     <div *ngIf="!loading" class="content-container">
-      
-      <!-- Toolbar (Vissza és Hozzáadás gombok) -->
+
       <div class="toolbar">
         <button class="btn btn-secondary" routerLink="/admin-dashboard">
           ← Vissza a Dashboardra
         </button>
-        
-        <!-- Feltételezem, hogy az openEditForm paraméter nélkül hívva új felhasználót hoz létre -->
+
         <button class="btn btn-add" (click)="openEditForm()">
           <span class="icon">+</span> Új Felhasználó
         </button>
       </div>
 
-      <!-- Users Table -->
       <div class="table-container glass-panel">
         <table class="styled-table">
           <thead>
@@ -93,7 +87,6 @@
 
   </div>
 
-  <!-- MODAL OVERLAY -->
   <div class="modal-overlay" [class.active]="isFormOpen">
     <div class="modal-container">
       
@@ -127,7 +120,6 @@
             </div>
           </div>
 
-          <!-- Jelszó csak hozzáadáskor -->
           <div class="form-group" *ngIf="!isEditing">
             <label>Jelszó</label>
             <input type="password" [(ngModel)]="formModel.password" name="password" class="input-field" required />

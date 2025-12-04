@@ -8,11 +8,10 @@ import { environment } from '../../../environments/environments';
   providedIn: 'root',
 })
 export class GenreService {
-  private genreUrl = `${environment.apiUrl}/Genre`;  // Backend API URL
+  private genreUrl = `${environment.apiUrl}/Genre`;
 
   constructor(private http: HttpClient) {}
 
-  // Műfajok lekérése
   getGenres(): Observable<Genre[]> {
     return this.http.get<Genre[]>(this.genreUrl);
   }

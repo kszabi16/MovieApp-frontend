@@ -33,7 +33,6 @@ export class ManageMoviesComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
-  // Keresés
   searchTerm: string = '';
   searchField: 'all' | 'title' | 'director' | 'genre' = 'all';
   isSearchDropdownOpen = false;
@@ -77,10 +76,6 @@ export class ManageMoviesComponent implements OnInit {
       }
     });
   }
-
-  // ---------------------
-  // KERESÉS
-  // ---------------------
 
   toggleSearchDropdown(): void {
     this.isSearchDropdownOpen = !this.isSearchDropdownOpen;
@@ -127,7 +122,6 @@ private getGenres(movie: Movie): string[] {
 get filteredMovies(): Movie[] {
   const term = this.searchTerm.trim().toLowerCase();
 
-  // --- GENRE FILTER ---
   if (this.searchField === 'genre') {
     if (!this.selectedGenre) return this.movies;
 
@@ -138,10 +132,8 @@ get filteredMovies(): Movie[] {
     );
   }
 
-  // --- ÜRES KERESŐ ---
   if (!term) return this.movies;
 
-  // --- ÁLTALÁNOS KERESÉS ---
   return this.movies.filter(movie => {
     const title = movie.title?.toLowerCase() ?? '';
     const description = movie.description?.toLowerCase() ?? '';
@@ -181,11 +173,6 @@ onGenreCheckboxChanged(event: Event, genreId: number) {
   }
 }
 
-
-  // ---------------------
-  // MŰFAJ VÁLASZTÁS – ID-ket tárolunk!
-  // ---------------------
-
   onGenreChange(genreId: number): void {
     const index = this.formModel.genreIds.indexOf(genreId);
 
@@ -195,10 +182,6 @@ onGenreCheckboxChanged(event: Event, genreId: number) {
       this.formModel.genreIds.splice(index, 1);
     }
   }
-
-  // ---------------------
-  // PLAKÁT KEZELÉSE
-  // ---------------------
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -210,10 +193,6 @@ onGenreCheckboxChanged(event: Event, genreId: number) {
     };
     reader.readAsDataURL(file);
   }
-
-  // ---------------------
-  // FORM NYITÁS
-  // ---------------------
 
   addMovie() {
     this.isFormOpen = true;
@@ -240,17 +219,12 @@ onGenreCheckboxChanged(event: Event, genreId: number) {
       releaseYear: movie.releaseYear,
       posterUrl: movie.posterUrl,
       director: movie.director || '',
-      genreIds: movie.genreIds || []   // FONTOS!!
+      genreIds: movie.genreIds || []
     };
   }
 
-  // ---------------------
-  // MENTÉS
-  // ---------------------
-
   saveMovie() {
     if (!this.editingMovie) {
-      // Új film
       const dto: CreateMovieDto = {
         title: this.formModel.title,
         description: this.formModel.description,
@@ -267,7 +241,6 @@ onGenreCheckboxChanged(event: Event, genreId: number) {
         }
       });
     } else {
-      // Szerkesztés
       const dto: UpdateMovieDto = {
         id: this.editingMovie.id,
         title: this.formModel.title,
